@@ -1,0 +1,8 @@
+App\Entity\Peliculas:
+    attributes:
+        id:
+            groups: ['Peliculas']
+        titulo:
+            groups: ['Peliculas']
+        anyo:
+            groups: ['Peliculas']

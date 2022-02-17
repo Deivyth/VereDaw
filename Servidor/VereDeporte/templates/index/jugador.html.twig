@@ -1,0 +1,16 @@
+{% extends 'index.html.twig' %}
+
+{% block title %}Hello LoginController!
+{% endblock %}
+
+{% block body %}
+		<h3>Indice de Jugador</h3>
+        <a>Ver reservas</a>
+        <a>Ver partidos</a>
+
+        {% if is_granted("ROLE_CAPITAN") %}
+            <a>Hacer reserva</a>
+            <a>Cancelar reserva</a>
+            <a>Apuntarse liga</a>
+        {% endif %}
+{% endblock %}
