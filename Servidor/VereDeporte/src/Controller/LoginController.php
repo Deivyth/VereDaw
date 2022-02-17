@@ -34,8 +34,8 @@ class LoginController extends AbstractController
     /**
      * @Route("/", name="inicio")
      */
-    public function inicio(){
-
+    public function inicio()
+    {
         $user = $this-> getUser();
 
         if($user){
