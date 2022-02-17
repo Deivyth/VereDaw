@@ -8,7 +8,11 @@ use App\Form\EquipoType;
 use App\Form\LoginType;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -71,20 +75,16 @@ class ProfesorController extends AbstractController
     public function equipo(Request $request, EntityManagerInterface $em): Response
     {
         $equipo = new Equipo();
-        $usuario = new Usuario();
 
-        $form = $this->createForm(EquipoType::class, $equipo);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            try {
-                $em->persist($equipo);
-                $em->flush();
-            } catch (\Exception $e) {
-                return new Response("Esto no va");
-            }
-            return $this->redirectToRoute("profesor");
-        }
+        $form = $this -> createFormBuilder($equipo)
+        ->add("nombre", TextType::class)
+        ->add("photo", FileType::class)
+        ->add("capitan", EntityType::class, array(
+            "class" => Usuario::class,
+            "choice_label" => "nombre",
+        ))
+        ->add("guardar", SubmitType::class, array("label" => "Crear Tarea"))
+        ->getForm();
 
         return $this->render('profesor/equipo.html.twig', [
             'controller_name' => 'LoginController',
