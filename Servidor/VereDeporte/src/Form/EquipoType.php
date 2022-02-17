@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Equipo;
 use App\Entity\Usuario;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -17,7 +18,7 @@ class EquipoType extends AbstractType
         $builder
             ->add('nombre')
             ->add('photo', FileType::class)
-            ->add('capitan', Usuario::class, array("class" => "App\Entity\Usuario",
+            ->add('capitan', EntityType::class, array("class" => Usuario::class,
             'required' => 'false',
             'expanded' => 'true'))
             ->add('submit', SubmitType::class)

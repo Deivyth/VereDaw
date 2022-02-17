@@ -77,7 +77,6 @@ class ProfesorController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $form -> get("capitan") -> getData();
             try {
                 $em->persist($equipo);
                 $em->flush();
