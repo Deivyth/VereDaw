@@ -44,12 +44,18 @@ class Equipo
      */
     private $partidos;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Usuario::class, mappedBy="equipo")
+     */
+    private $usuarios;
+
     public function __construct()
     {
         $this->solicitas = new ArrayCollection();
         $this->reservas = new ArrayCollection();
         $this->apuntas = new ArrayCollection();
         $this->partidos = new ArrayCollection();
+        $this->usuarios = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -83,7 +89,8 @@ class Equipo
 
     public function getPhoto()
     {
-        return $this->photo;
+        
+        return base64_encode(stream_get_contents($this->photo,-1,-1));
     }
 
     public function setPhoto($photo): self
@@ -147,6 +154,36 @@ class Equipo
             // set the owning side to null (unless already changed)
             if ($partido->getIdLocal() === $this) {
                 $partido->setIdLocal(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Usuario[]
+     */
+    public function getUsuarios(): Collection
+    {
+        return $this->usuarios;
+    }
+
+    public function addUsuario(Usuario $usuario): self
+    {
+        if (!$this->usuarios->contains($usuario)) {
+            $this->usuarios[] = $usuario;
+            $usuario->setEquipo($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUsuario(Usuario $usuario): self
+    {
+        if ($this->usuarios->removeElement($usuario)) {
+            // set the owning side to null (unless already changed)
+            if ($usuario->getEquipo() === $this) {
+                $usuario->setEquipo(null);
             }
         }
 

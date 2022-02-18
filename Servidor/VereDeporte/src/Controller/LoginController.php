@@ -47,6 +47,11 @@ class LoginController extends AbstractController
                         'controller_name' => 'LoginController'
                     ]);
                     break;
+                case "ROLE_CAPITAN":
+                    return $this->render('index/jugador.html.twig', [
+                        'controller_name' => 'LoginController'
+                    ]);
+                    break;
                 case "ROLE_PROFESOR":
                     return $this->render('index/profesor.html.twig', [
                         'controller_name' => 'LoginController'

@@ -25,12 +25,12 @@ class Liga
     private $nombre;
 
     /**
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="datetime")
      */
     private $fecha_inicio;
 
     /**
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="datetime", nullable=true)
      */
     private $fecha_fin;
 
@@ -73,7 +73,7 @@ class Liga
         return $this->fecha_fin;
     }
 
-    public function setFechaFin(\DateTimeInterface $fecha_fin): self
+    public function setFechaFin(?\DateTimeInterface $fecha_fin): self
     {
         $this->fecha_fin = $fecha_fin;
 

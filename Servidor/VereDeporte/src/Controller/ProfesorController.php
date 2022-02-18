@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Equipo;
+use App\Entity\Liga;
 use App\Entity\Usuario;
 use App\Form\EquipoType;
 use App\Form\LoginType;
@@ -10,6 +11,7 @@ use App\Form\LoginType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -76,19 +78,63 @@ class ProfesorController extends AbstractController
     {
         $equipo = new Equipo();
 
-        $form = $this -> createFormBuilder($equipo)
-        ->add("nombre", TextType::class)
-        ->add("photo", FileType::class)
-        ->add("capitan", EntityType::class, array(
-            "class" => Usuario::class,
-            "choice_label" => "nombre",
-        ))
-        ->add("guardar", SubmitType::class, array("label" => "Crear Tarea"))
-        ->getForm();
+        $form = $this->createForm(EquipoType::class, $equipo);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $form -> get("capitan") -> getData() -> setRoles(["ROLE_CAPITAN"]);
+
+            try {
+                $em->persist($equipo);
+                $em->flush();
+            } catch (\Exception $e) {
+                return new Response("Esto no va");
+            }
+        }
 
         return $this->render('profesor/equipo.html.twig', [
             'controller_name' => 'LoginController',
             'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/profesor/liga", name="add_liga")
+     */
+    public function liga(Request $request, EntityManagerInterface $em): Response
+    {
+        $liga = new Liga();
+        $liga -> setFechaInicio(new \DateTime("tomorrow"));
+
+        $form = $this -> createFormBuilder($liga)
+        ->add("nombre", TextType::class)
+        ->add("fecha_inicio", DateType::class)
+        ->add("guardar", SubmitType::class, array("label" => "Crear Liga"))
+        ->getForm();
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            try {
+                $em->persist($liga);
+                $em->flush();
+            } catch (\Exception $e) {
+                return new Response("Esto no va");
+            }
+        }
+
+        return $this->render('profesor/equipo.html.twig', [
+            'controller_name' => 'LoginController',
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/profesor/eliminar_reserva", name="del_reserva")
+     */
+    public function delreserva(Request $request, EntityManagerInterface $em): Response
+    {
+        return $this->render('profesor/equipo.html.twig', [
+            'controller_name' => 'LoginController'
         ]);
     }
 }

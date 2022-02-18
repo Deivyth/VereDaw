@@ -1,0 +1,8 @@
+{% extends 'index.html.twig' %}
+
+{% block body %}
+    {# {{solicitudes.equipo.nombre}} #}
+     {% for solicitud in solicitudes %}
+        {{solicitud.equipo.nombre}} {{solicitud.usuario.nombre}} <a class="btn btn-primary" href=" {{path('login')}}">Añadir</a>
+    {% endfor %} 
+{% endblock %}

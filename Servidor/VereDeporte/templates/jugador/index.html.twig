@@ -1,0 +1,14 @@
+{% extends 'index.html.twig' %}
+
+{% block body %}
+
+    {{form_start(form)}}
+	{{form_widget(form)}}
+	{{form_end(form)}}
+
+{#  {% for equipo in equipos %}
+        {{equipo.nombre}}
+        <img src="data:image/jpg;base64,{{equipo.photo}}">
+    {% endfor %} #}
+
+{% endblock %}

@@ -48,14 +48,14 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
     private $photo;
 
     /**
-     * @ORM\OneToOne(targetEntity=Equipo::class, mappedBy="capitan", cascade={"persist", "remove"})
-     */
-    private $equipo;
-
-    /**
      * @ORM\OneToMany(targetEntity=Reserva::class, mappedBy="id_usuario")
      */
     private $reservas;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Equipo::class, inversedBy="usuarios")
+     */
+    private $equipo;
 
     public function __construct()
     {
