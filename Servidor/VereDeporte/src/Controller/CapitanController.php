@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Equipo;
 use App\Entity\Solicita;
 use App\Entity\Usuario;
 use Doctrine\ORM\EntityManagerInterface;
@@ -14,13 +15,13 @@ class CapitanController extends AbstractController
     /**
      * @Route("/capitan/solicitudes", name="list_players")
      */
-    public function list_players(EntityManagerInterface $em): Response
+    public function listPlayers(EntityManagerInterface $em): Response
     {
         $usuario = $em -> getRepository(Usuario::class) -> findOneBy(["email" => $this -> getUser() -> getUserIdentifier()]);
         
         $equipo = $usuario -> getEquipo();
         $solicitudes = $em -> getRepository(Solicita::class) -> findBy(["equipo" => $equipo]);
-        return $this->render('capitan/players.html.twig', [
+        return $this-> render('capitan/players.html.twig', [
             'controller_name' => 'CapitanController',
             "solicitudes" => $solicitudes
         ]);
@@ -29,7 +30,17 @@ class CapitanController extends AbstractController
     /**
      * @Route("/capitan/solicitudes/añadirequipo", name="list_players")
      */
-    public function add_team_toUser(){
+    public function addUserToTeam(EntityManagerInterface $em)
+    {
+        $equipo = $em -> getRepository(Equipo::class) -> findOneBy(["nombre" =>  $_POST["equipo"]]);
+        $usuario = $em -> getRepository(Usuario::class) -> findOneBy(["nombre" => $_POST["usuario"]]);
 
+        $usuario -> setEquipo($equipo);
+        try {
+            $em -> persist($usuario);
+            $em -> flush();
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
     }
 }
