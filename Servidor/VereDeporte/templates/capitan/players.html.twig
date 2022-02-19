@@ -1,15 +1,15 @@
 {% extends 'index.html.twig' %}
 
 {% block body %}
-  {% for solicitud in solicitudes %}
-    {{ solicitud.usuario.nombre }}
+  {% for usuario in solicitudes %}
+    {{ usuario.nombre }}
     <script>
 
-        function addUserToTeam(equipo,nombre,url){ 
+        function addUserToTeam(nombre,equipo,url){ 
 
           var data = new FormData();
-          data.append("equipo",equipo);
           data.append("jugador",nombre);
+          data.append("equipo",equipo);
 
           fetch(url,{
               method: "POST",
@@ -17,15 +17,16 @@
           })
           .then( resp => resp.json())
           .then( data => {
-              
+              window.location.reload();
           })
           .catch( error => { console.log(error) });
         };
 
-        function delUserToRequest(equipo,url){ 
+        function delUserToRequest(nombre,equipo,url){ 
 
           var data = new FormData();
           data.append("jugador",nombre);
+          data.append("equipo",equipo);
 
           fetch(url,{
               method: "POST",
@@ -33,14 +34,15 @@
           })
           .then( resp => resp.json())
           .then( data => {
-              
+              window.location.reload();
           })
           .catch( error => { console.log(error) });
         };
       
     </script>
 
-    <a class="btn btn-primary" onclick="addUserToTeam('{{ solicitud.equipo.nombre }}','{{ solicitud.usuario.nombre }}','{{ path("list_players") }}')">Añadir</a>
-    <a class="btn btn-primary" onclick="delUserToRequest('{{ solicitud.usuario.nombre }}','{{ path("list_players") }}')">Eliminar</a>
+    <a class="btn btn-primary" onclick="addUserToTeam('{{usuario.id}}','{{equipo.id}}','{{ path("add_at_team") }}')">Añadir</a>
+    <a class="btn btn-primary" onclick="delUserToRequest('{{usuario.id}}','{{equipo.id}}','{{ path("del_at_request") }}')">Eliminar</a>
   {% endfor %}
+  
 {% endblock %}

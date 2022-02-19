@@ -1,20 +1,22 @@
 {% extends 'index.html.twig' %}
 
-{% block title %}Hello LoginController!
-{% endblock %}
-
 {% block body %}
-		<h3>Indice de Jugador</h3>
-        <div class="btn-group" role="group" aria-label="Basic example">
-            <a class="btn btn-primary" href={{ path('request_team')}}>Solicitar equipo</a>
-            <a class="btn btn-primary">Ver reservas</a>
-            <a class="btn btn-primary">Ver partidos</a>
 
-            {% if is_granted("ROLE_CAPITAN") %}
-                <a class="btn btn-primary" href={{ path('list_players') }}>Ver solicitudes</a>
-                <a class="btn btn-primary">Hacer reserva</a>
-                <a class="btn btn-primary">Cancelar reserva</a>
-                <a class="btn btn-primary">Apuntarse liga</a>
+        <div class="btn-group mt-5" role="group" aria-label="Basic example">
+            {% if is_granted("ROLE_JUGADOR") %}
+            <a class="btn btn-primary rounded-3 m-1" href={{ path('request_team')}}>Solicitar equipo</a><br>
+            <a class="btn btn-primary rounded-3 m-1">Ver reservas</a><br>
             {% endif %}
+            {% if is_granted("ROLE_CAPITAN") %}
+            <a class="btn btn-primary rounded-3 m-1" href={{ path('list_players') }}>Ver solicitudes</a><br>
+            <a class="btn btn-primary dropdown-toggle rounded-3 m-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">Reservas</a>
+  		    <ul class="dropdown-menu bg-primary">
+    		    <li><a class="dropdown-item text-light">Ver</a></li>
+                <li><a class="dropdown-item text-light">Crear</a></li>
+                <li><a class="dropdown-item text-light">Eliminar</a></li>
+  		    </ul>
+            <a class="btn btn-primary rounded-3 m-1">Apuntarse liga</a><br>
+            {% endif %}
+            <a class="btn btn-primary rounded-3 m-1">Ver partidos</a>
         </div>
 {% endblock %}

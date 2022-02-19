@@ -20,29 +20,59 @@ class CapitanController extends AbstractController
         $usuario = $em -> getRepository(Usuario::class) -> findOneBy(["email" => $this -> getUser() -> getUserIdentifier()]);
         
         $equipo = $usuario -> getEquipo();
-        $solicitudes = $em -> getRepository(Solicita::class) -> findBy(["equipo" => $equipo]);
+        $solicitudes = $equipo -> getUsuarios();
         
-        if(isset($_POST["equipo"]) && isset($_POST["jugador"])){
-            $equipo = $em -> getRepository(Equipo::class) -> findOneBy(["nombre" =>  $_POST["equipo"]]);
-            $usuario = $em -> getRepository(Usuario::class) -> findOneBy(["nombre" => $_POST["jugador"]]);
+        return $this-> render('capitan/players.html.twig', [
+            'controller_name' => 'CapitanController',
+            "solicitudes" => $solicitudes,
+            "equipo" => $equipo
+        ]);
+    }
 
-            $usuario -> setEquipo($equipo);
+    //AJAX
+    /**
+     * @Route("/capitan/fichar", name="add_at_team")
+     */
+    public function addTeamAtUser(EntityManagerInterface $em): Response{
+        if(isset($_POST["equipo"]) && isset($_POST["jugador"])){
+            $usuario = $em -> getRepository(Usuario::class) -> find($_POST["jugador"]);
+            $equipo = $em -> getRepository(Equipo::class) -> find($_POST["equipo"]);
+
+            if($usuario -> getEquipo() == null){
+                $usuario -> setEquipo($equipo);
+                $usuario -> removeSolicitud($equipo);
+                try {
+                    $em -> persist($usuario);
+                    $em -> flush();
+                } catch (\Throwable $th) {
+                    return new Response($th);
+                }
+            }else{
+                return new Response("Este jugador ya esta fichado");
+            }
+        }
+
+        return $this-> redirect("/capitan/solicitudes");
+    }
+    
+    /**
+     * @Route("/capitan/eliminar", name="del_at_request")
+     */
+    public function delAtRequest(EntityManagerInterface $em){
+        if(isset($_POST["equipo"]) && isset($_POST["jugador"])){
+
+            $usuario = $em -> getRepository(Usuario::class) -> find($_POST["jugador"]);
+            $equipo = $em -> getRepository(Equipo::class) -> find($_POST["equipo"]);
+            
+            $usuario -> removeSolicitud($equipo);
             try {
                 $em -> persist($usuario);
                 $em -> flush();
             } catch (\Throwable $th) {
                 //throw $th;
             }
-        }
 
-        if($_POST["jugador"]){
-            $usuario = $em -> getRepository(Usuario::class) -> findOneBy(["nombre" => $_POST["jugador"]]);
+            return $this-> redirect("/capitan/solicitudes");
         }
-        
-        return $this-> render('capitan/players.html.twig', [
-            'controller_name' => 'CapitanController',
-            "solicitudes" => $solicitudes
-        ]);
     }
-
 }

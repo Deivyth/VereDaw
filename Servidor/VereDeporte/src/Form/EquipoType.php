@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Equipo;
 use App\Entity\Usuario;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -17,13 +18,23 @@ class EquipoType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-        ->add("nombre", TextType::class)
+        ->add("nombre", TextType::class, array(
+            "label" => " ",
+            "attr" => ["class" => "col-12","placeholder"=> "Name"]
+        ))
         ->add("photo", FileType::class)
         ->add("capitan", EntityType::class, array(
             "class" => Usuario::class,
-            "choice_label" => "nombre",
+/*             "query_builder" => function(EntityRepository $er){
+                return $er -> createQueryBuilder("u")
+                    -> where("u.roles = :rol")
+                    -> setParameter("rol", ["ROLE_JUGADOR"]);
+            }, */
+            "choice_label" => "nombre"
         ))
-        ->add("guardar", SubmitType::class, array("label" => "Crear Equipo"));
+        ->add("guardar", SubmitType::class, array(
+            "label" => "Crear Equipo",
+            "attr" => ["class" => "col-12 btn btn-primary mt-1"]));
     }
 
     public function configureOptions(OptionsResolver $resolver): void

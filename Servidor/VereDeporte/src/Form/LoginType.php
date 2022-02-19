@@ -17,12 +17,23 @@ class LoginType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('nombre', TextType::class, array("label" => "Name"))
-            ->add('email', EmailType::class)
-            ->add('password', PasswordType::class)
-            ->add("password2", PasswordType::class, array("mapped"=>false, "label" => "Confirm password"))
+            ->add('nombre', TextType::class, array(
+                "label" => " ",
+                "required" => false,
+                "attr" => ["placeholder" => "Nombre", "class" => "col-12 m-1"]))
+            ->add('email', EmailType::class,array(
+                "label" => " ",
+                "attr" => ["placeholder" => "Email", "class" => "col-12 m-1"]))
+            ->add('password', PasswordType::class,array(
+                "label" => " ",
+                "attr" => ["placeholder" => "Password", "class" => "col-12 m-1"]))
+            ->add("password2", PasswordType::class, array(
+                "mapped"=>false, 
+                "label" => " ",
+                "attr" => ["placeholder" => "Password", "class" => "col-12 m-1"]))
             ->add('photo', FileType::class)
-            ->add("submit", SubmitType::class)
+            ->add("submit", SubmitType::class,array(
+                "attr" => ["class" => "btn btn-primary mt-1 col-12"]))
         ;
     }
 

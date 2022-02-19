@@ -1,20 +1,20 @@
 {% extends 'index.html.twig' %}
 
-{% block title %}Hello LoginController!
-{% endblock %}
-
 {% block body %}
-	<div>Indice de Profesor</div>
-	<div class="btn-group" role="group" aria-label="Basic example">
-		<a class="btn btn-primary m-1" href="{{ path('add_profesor') }}">Registrar profesor</a>
+	<div class="btn-group mt-5" role="group" aria-label="Basic example">
+		<a class="btn btn-primary rounded-3 m-1" href="{{ path('add_profesor') }}">Registrar profesor</a>
 		<br>
-		<a class="btn btn-primary m-1" href="{{ path('add_team')}}">Registrar equipo<a>
+		<a class="btn btn-primary rounded-3 m-1" href="{{ path('add_team')}}">Registrar equipo<a>
 		<br>
-		<a class="btn btn-primary m-1" href="{{ path('add_liga') }}">Registrar liga</a>
+  		<a class="btn btn-primary dropdown-toggle rounded-3 m-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">Liga</a>
+  		<ul class="dropdown-menu bg-primary">
+    		<li><a class="dropdown-item text-light" href="{{ path('add_liga') }}">Registrar liga</a></li>
+    		<li><a class="dropdown-item text-light" href="#">Crear liga</a></li>
+  		</ul>
 		<br>
-		<a class="btn btn-primary m-1">Cambiar vigilancia</a>
+		<a class="btn btn-primary rounded-3 m-1">Cambiar vigilancia</a>
 		<br>
-		<a class="btn btn-primary m-1" href="{{ path('del_reserva') }}">Cancelar reserva</a>
+		<a class="btn btn-primary rounded-3 m-1" href="{{ path('del_reserva') }}">Cancelar reserva</a>
 		<br>
 	</div>
 {% endblock %}

@@ -57,10 +57,16 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $equipo;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Equipo::class, inversedBy="usuarios")
+     */
+    private $solicitud;
+ 
+
     public function __construct()
     {
-        $this->solicitas = new ArrayCollection();
         $this->reservas = new ArrayCollection();
+        $this->solicitud = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -228,4 +234,29 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    /**
+     * @return Collection|Equipo[]
+     */
+    public function getSolicitud(): Collection
+    {
+        return $this->solicitud;
+    }
+
+    public function addSolicitud(Equipo $solicitud): self
+    {
+        if (!$this->solicitud->contains($solicitud)) {
+            $this->solicitud[] = $solicitud;
+        }
+
+        return $this;
+    }
+
+    public function removeSolicitud(Equipo $solicitud): self
+    {
+        $this->solicitud->removeElement($solicitud);
+
+        return $this;
+    }
+
 }

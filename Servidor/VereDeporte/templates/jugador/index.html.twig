@@ -2,13 +2,11 @@
 
 {% block body %}
 
-    {{form_start(form)}}
-	{{form_widget(form)}}
-	{{form_end(form)}}
-
-{#  {% for equipo in equipos %}
-        {{equipo.nombre}}
-        <img src="data:image/jpg;base64,{{equipo.photo}}">
-    {% endfor %} #}
+    <div class="col-4 mt-5">
+        {{form_start(form)}}
+	    {{form_widget(form)}}
+        <a class="btn btn-primary m-1 col-12" href="{{ path("inicio") }}">Volver<a>
+	    {{form_end(form)}}
+    </div>
 
 {% endblock %}

@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Equipo;
 use App\Entity\Solicita;
+use App\Entity\Usuario;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,37 +20,38 @@ class JugadorController extends AbstractController
      */
     public function request_team(Request $request,EntityManagerInterface $em): Response
     {
-        //$equipos = $em -> getRepository(Equipo::class) -> findAll();
-        $solicita = new Solicita();
 
-        $form = $this -> createFormBuilder($solicita)
-        ->add("equipo",EntityType::class, array(
+        $email = $this -> getUser() -> getUserIdentifier();
+        $usuario = $em -> getRepository(Usuario::class) -> findOneBy(["email" => $email]);
+
+        $form = $this -> createFormBuilder()
+        ->add("solicitud",EntityType::class, array(
             "class" => Equipo::class,
             "choice_label" => "nombre",
             "label" => "Equipos "
         ))
         -> add("submit", SubmitType::class, array(
-            "label" => "Solicitar equipo"
+            "label" => "Solicitar equipo",
+            "attr" => ["class" => "btn btn-primary col-12 m-1"]
         ))
         -> getForm();
-        
-        $usuario = $this -> getUser();
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $solicita -> setUsuario($usuario);
+            $equipo = $em -> getRepository(Equipo::class) -> find($form -> get("solicitud") -> getData() -> getId());
+            $usuario -> addSolicitud($equipo);
             try {
-                $em->persist($solicita);
+                $em->persist($usuario);
                 $em->flush();
             } catch (\Exception $e) {
-                return new Response("Esto no va");
+                return new Response("Esto no va:".$e);
             }
         }
 
         return $this->render('jugador/index.html.twig', [
             'controller_name' => 'JugadorController',
             "form" => $form-> createView()
-            //'equipos' => $equipos
         ]);
+
     }
 }

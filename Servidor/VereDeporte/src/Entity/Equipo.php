@@ -35,6 +35,11 @@ class Equipo
     private $photo;
 
     /**
+     * @ORM\ManyToMany(targetEntity=Usuario::class, mappedBy="solicitud")
+     */
+    private $usuarios;
+
+    /**
      * @ORM\OneToMany(targetEntity=Reserva::class, mappedBy="id_equipo")
      */
     private $reservas;
@@ -44,14 +49,9 @@ class Equipo
      */
     private $partidos;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Usuario::class, mappedBy="equipo")
-     */
-    private $usuarios;
 
     public function __construct()
     {
-        $this->solicitas = new ArrayCollection();
         $this->reservas = new ArrayCollection();
         $this->apuntas = new ArrayCollection();
         $this->partidos = new ArrayCollection();
@@ -89,8 +89,8 @@ class Equipo
 
     public function getPhoto()
     {
-        
-        return base64_encode(stream_get_contents($this->photo,-1,-1));
+        //base64_encode(stream_get_contents($this->photo,-1,-1))
+        return $this->photo;;
     }
 
     public function setPhoto($photo): self
@@ -172,7 +172,7 @@ class Equipo
     {
         if (!$this->usuarios->contains($usuario)) {
             $this->usuarios[] = $usuario;
-            $usuario->setEquipo($this);
+            $usuario->addSolicitud($this);
         }
 
         return $this;
@@ -181,12 +181,10 @@ class Equipo
     public function removeUsuario(Usuario $usuario): self
     {
         if ($this->usuarios->removeElement($usuario)) {
-            // set the owning side to null (unless already changed)
-            if ($usuario->getEquipo() === $this) {
-                $usuario->setEquipo(null);
-            }
+            $usuario->removeSolicitud($this);
         }
 
         return $this;
     }
+
 }

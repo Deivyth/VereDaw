@@ -107,9 +107,14 @@ class ProfesorController extends AbstractController
         $liga -> setFechaInicio(new \DateTime("tomorrow"));
 
         $form = $this -> createFormBuilder($liga)
-        ->add("nombre", TextType::class)
+        ->add("nombre", TextType::class, array(
+            "label" => " ",
+            "attr" => ["class" => "col-12","placeholder" => "Name"]
+        ))
         ->add("fecha_inicio", DateType::class)
-        ->add("guardar", SubmitType::class, array("label" => "Crear Liga"))
+        ->add("guardar", SubmitType::class, array(
+            "label" => "Crear Liga",
+            "attr" => ["class" => "col-12 btn btn-primary mt-1"]))
         ->getForm();
 
         $form->handleRequest($request);
