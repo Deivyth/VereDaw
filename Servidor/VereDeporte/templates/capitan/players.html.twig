@@ -1,19 +1,46 @@
 {% extends 'index.html.twig' %}
 
 {% block body %}
-    {# {{solicitudes.equipo.nombre}} #}
-     {% for solicitud in solicitudes %}
-        {{solicitud.equipo.nombre}} 
-        {{solicitud.usuario.nombre}} 
-        <a class="btn btn-primary" onclick="addUserToTeam()">Añadir</a>
-    {% endfor %} 
+  {% for solicitud in solicitudes %}
+    {{ solicitud.usuario.nombre }}
+    <script>
+
+        function addUserToTeam(equipo,nombre,url){ 
+
+          var data = new FormData();
+          data.append("equipo",equipo);
+          data.append("jugador",nombre);
+
+          fetch(url,{
+              method: "POST",
+              body: data
+          })
+          .then( resp => resp.json())
+          .then( data => {
+              
+          })
+          .catch( error => { console.log(error) });
+        };
+
+        function delUserToRequest(equipo,url){ 
+
+          var data = new FormData();
+          data.append("jugador",nombre);
+
+          fetch(url,{
+              method: "POST",
+              body: data
+          })
+          .then( resp => resp.json())
+          .then( data => {
+              
+          })
+          .catch( error => { console.log(error) });
+        };
+      
+    </script>
+
+    <a class="btn btn-primary" onclick="addUserToTeam('{{ solicitud.equipo.nombre }}','{{ solicitud.usuario.nombre }}','{{ path("list_players") }}')">Añadir</a>
+    <a class="btn btn-primary" onclick="delUserToRequest('{{ solicitud.usuario.nombre }}','{{ path("list_players") }}')">Eliminar</a>
+  {% endfor %}
 {% endblock %}
-
-<script>
-    function addUserToTeam(){
-        console.log({{solicitud.equipo.nombre}});
-    //var data = new FormData();
-    //data.append("equipo", {{solicitud.equipo.nombre}})
-    }
-
-</script>

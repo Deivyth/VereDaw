@@ -21,26 +21,28 @@ class CapitanController extends AbstractController
         
         $equipo = $usuario -> getEquipo();
         $solicitudes = $em -> getRepository(Solicita::class) -> findBy(["equipo" => $equipo]);
+        
+        if(isset($_POST["equipo"]) && isset($_POST["jugador"])){
+            $equipo = $em -> getRepository(Equipo::class) -> findOneBy(["nombre" =>  $_POST["equipo"]]);
+            $usuario = $em -> getRepository(Usuario::class) -> findOneBy(["nombre" => $_POST["jugador"]]);
+
+            $usuario -> setEquipo($equipo);
+            try {
+                $em -> persist($usuario);
+                $em -> flush();
+            } catch (\Throwable $th) {
+                //throw $th;
+            }
+        }
+
+        if($_POST["jugador"]){
+            $usuario = $em -> getRepository(Usuario::class) -> findOneBy(["nombre" => $_POST["jugador"]]);
+        }
+        
         return $this-> render('capitan/players.html.twig', [
             'controller_name' => 'CapitanController',
             "solicitudes" => $solicitudes
         ]);
     }
 
-    /**
-     * @Route("/capitan/solicitudes/añadirequipo", name="list_players")
-     */
-    public function addUserToTeam(EntityManagerInterface $em)
-    {
-        $equipo = $em -> getRepository(Equipo::class) -> findOneBy(["nombre" =>  $_POST["equipo"]]);
-        $usuario = $em -> getRepository(Usuario::class) -> findOneBy(["nombre" => $_POST["usuario"]]);
-
-        $usuario -> setEquipo($equipo);
-        try {
-            $em -> persist($usuario);
-            $em -> flush();
-        } catch (\Throwable $th) {
-            //throw $th;
-        }
-    }
 }
