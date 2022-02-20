@@ -26,7 +26,7 @@ class LoginType extends AbstractType
                 "attr" => ["placeholder" => "Password", "class" => "col-12 m-1"]))
             ->add("password2", PasswordType::class, array(
                 "mapped"=>false, 
-                "attr" => ["placeholder" => "Password", "class" => "col-12 m-1"]))
+                "attr" => ["placeholder" => "Confirm Password", "class" => "col-12 m-1"]))
             ->add('photo', FileType::class, array(
                 "attr" => ["class" => "col-12 m-1 text-primary"]
             ))

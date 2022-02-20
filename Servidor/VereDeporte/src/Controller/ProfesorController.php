@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Equipo;
 use App\Entity\Liga;
+use App\Entity\Reserva;
 use App\Entity\Usuario;
 use App\Form\EquipoType;
 use App\Form\LoginType;
@@ -129,9 +130,18 @@ class ProfesorController extends AbstractController
         }
 
         return $this->render('profesor/equipo.html.twig', [
-            'controller_name' => 'LoginController',
             'form' => $form->createView()
         ]);
     }
 
+    /**
+     * @Route("profesor/reserva", name="list_all_reserva")
+     */
+    public function listAllReserva(EntityManagerInterface $em){
+        $reservas = $em -> getRepository(Reserva::class) -> findAll();
+
+        return $this->render('profesor/listReserva.html.twig', [
+            'reservas' => $reservas
+        ]);
+    }
 }

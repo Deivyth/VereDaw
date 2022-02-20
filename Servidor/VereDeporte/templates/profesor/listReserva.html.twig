@@ -23,6 +23,7 @@
     <table class="table table-striped">
         <thead>
             <tr>
+              <th scope="col">Equipo</th>
               <th scope="col">Vigilante</th>
               <th scope="col">Campo</th>
               <th scope="col">Fecha y hora</th>
@@ -31,6 +32,7 @@
         <tbody>
     {% for reserva in reservas %}
         <tr>
+            <td scope="row">{{reserva.equipo.nombre}}</td>
             <td scope="row">{{reserva.vigilante.nombre}}</td>
             <td scope="row">{{reserva.campo.tipo}}</td>
             <td scope="row">{{reserva.fecha | date("Y-m-d H:i")}}</td>

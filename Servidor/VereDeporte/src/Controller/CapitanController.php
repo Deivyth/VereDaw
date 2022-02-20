@@ -3,14 +3,18 @@
 namespace App\Controller;
 
 use App\Entity\Equipo;
+use App\Entity\Liga;
 use App\Entity\Reserva;
 use App\Entity\Usuario;
 use App\Form\ReservaType;
 use DateInterval;
 use DatePeriod;
 use DateTime;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -72,6 +76,43 @@ class CapitanController extends AbstractController
         ]);
     }
 
+
+    /**
+     * @Route("/capitan/liga", name="add_liga_at_team")
+     */
+    public function addLiga(Request $request, EntityManagerInterface $em){
+
+        $form = $this -> createFormBuilder()
+        ->add("apunta",EntityType::class, array(
+            "class" => Liga::class,
+            "choice_label" => "nombre",
+            "label" => "Ligas "
+        ))
+        -> add("submit", SubmitType::class, array(
+            "label" => "Solicitar liga",
+            "attr" => ["class" => "btn btn-primary col-12 m-1"]
+        ))
+        -> getForm();
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $equipo = $this -> getUser() -> getEquipo();
+            $liga = $form -> get("apunta") -> getData();
+            $liga -> addApuntum($equipo);
+
+            try {
+                $em->persist($liga);
+                $em->flush();
+            } catch (\Exception $e) {
+                return new Response("Esto no va:".$e);
+            }
+        }
+
+        return $this->render('capitan/liga.html.twig', [
+            'controller_name' => 'JugadorController',
+            "form" => $form-> createView()
+        ]);
+    }
 
     /**
      * @Route("/capitan/listarReserva", name="list_reserva")
@@ -145,7 +186,9 @@ class CapitanController extends AbstractController
             } catch (\Throwable $th) {
                 return json_encode($th);
             }
+
+            return $this-> redirect("/capitan/listarReserva");
         }
-        return $this-> redirect("/capitan/listarReserva");
+       
     }
 }

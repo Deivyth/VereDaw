@@ -1,9 +1,7 @@
 {% extends 'index.html.twig' %}
 
 {% block body %}
-  {% for usuario in solicitudes %}
-    {{ usuario.nombre }}
-    <script>
+<script>
 
         function addUserToTeam(nombre,equipo,url){ 
 
@@ -40,9 +38,14 @@
         };
       
     </script>
-
-    <a class="btn btn-primary" onclick="addUserToTeam('{{usuario.id}}','{{equipo.id}}','{{ path("add_at_team") }}')">Añadir</a>
-    <a class="btn btn-danger" onclick="delUserToRequest('{{usuario.id}}','{{equipo.id}}','{{ path("del_at_request") }}')">Eliminar</a>
+    <div class="col-6">
+    {% for usuario in solicitudes %}
+      <div class = "row">
+        <h3 class="col-auto">{{usuario.nombre}}</h3>
+        <a class=" btn btn-primary col-auto m-1" onclick="addUserToTeam('{{usuario.id}}','{{equipo.id}}','{{ path("add_at_team") }}')">Añadir</a>
+        <a class=" btn btn-danger col-auto m-1" onclick="delUserToRequest('{{usuario.id}}','{{equipo.id}}','{{ path("del_at_request") }}')">Eliminar</a>
+      </div>
   {% endfor %}
   <a class="btn btn-primary col-12 mt-1" href={{ path('inicio') }}>Volver</a>
+  </div>
 {% endblock %}

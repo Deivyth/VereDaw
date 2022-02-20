@@ -1,0 +1,12 @@
+{% extends 'index.html.twig' %}
+
+{% block body %}
+
+    <div class="col-4 mt-5">
+        {{form_start(form)}}
+	    {{form_widget(form)}}
+        <a class="btn btn-primary m-1 col-12" href="{{ path("inicio") }}">Volver<a>
+	    {{form_end(form)}}
+    </div>
+
+{% endblock %}
