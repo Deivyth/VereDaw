@@ -11,9 +11,8 @@
             <a class="btn btn-primary rounded-3 m-1" href={{ path('list_players') }}>Ver solicitudes</a><br>
             <a class="btn btn-primary dropdown-toggle rounded-3 m-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">Reservas</a>
   		    <ul class="dropdown-menu bg-primary">
-    		    <li><a class="dropdown-item text-light">Ver</a></li>
-                <li><a class="dropdown-item text-light">Crear</a></li>
-                <li><a class="dropdown-item text-light">Eliminar</a></li>
+    		    <li><a class="dropdown-item text-light" href={{ path('list_reserva') }}>Ver o eliminar</a></li>
+                <li><a class="dropdown-item text-light" href={{ path('add_reserva') }}>Crear</a></li>
   		    </ul>
             <a class="btn btn-primary rounded-3 m-1">Apuntarse liga</a><br>
             {% endif %}

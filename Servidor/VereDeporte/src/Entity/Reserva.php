@@ -20,20 +20,20 @@ class Reserva
     /**
      * @ORM\ManyToOne(targetEntity=Equipo::class, inversedBy="reservas")
      */
-    private $id_equipo;
+    private $equipo;
 
     /**
      * @ORM\ManyToOne(targetEntity=Usuario::class, inversedBy="reservas")
      */
-    private $id_usuario;
+    private $vigilante;
 
     /**
-     * @ORM\OneToOne(targetEntity=Campo::class, inversedBy="reserva", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity=Campo::class)
      */
-    private $id_campo;
+    private $campo;
 
     /**
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="datetime")
      */
     private $fecha;
 
@@ -42,38 +42,38 @@ class Reserva
         return $this->id;
     }
 
-    public function getIdEquipo(): ?Equipo
+    public function getEquipo(): ?Equipo
     {
-        return $this->id_equipo;
+        return $this->equipo;
     }
 
-    public function setIdEquipo(?Equipo $id_equipo): self
+    public function setEquipo(?Equipo $equipo): self
     {
-        $this->id_equipo = $id_equipo;
+        $this->equipo = $equipo;
 
         return $this;
     }
 
-    public function getIdUsuario(): ?Usuario
+    public function getVigilante(): ?Usuario
     {
-        return $this->id_usuario;
+        return $this->vigilante;
     }
 
-    public function setIdUsuario(?Usuario $id_usuario): self
+    public function setVigilante(?Usuario $vigilante): self
     {
-        $this->id_usuario = $id_usuario;
+        $this->vigilante = $vigilante;
 
         return $this;
     }
 
-    public function getIdCampo(): ?Campo
+    public function getCampo(): ?Campo
     {
-        return $this->id_campo;
+        return $this->campo;
     }
 
-    public function setIdCampo(?Campo $id_campo): self
+    public function setCampo(?Campo $campo): self
     {
-        $this->id_campo = $id_campo;
+        $this->campo = $campo;
 
         return $this;
     }

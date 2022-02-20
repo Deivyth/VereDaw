@@ -83,6 +83,7 @@ class ProfesorController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $form -> get("capitan") -> getData() -> setRoles(["ROLE_CAPITAN"]);
+            $equipo -> setCapitan($form -> get("capitan") -> getData());
 
             try {
                 $em->persist($equipo);
@@ -133,13 +134,4 @@ class ProfesorController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/profesor/eliminar_reserva", name="del_reserva")
-     */
-    public function delreserva(Request $request, EntityManagerInterface $em): Response
-    {
-        return $this->render('profesor/equipo.html.twig', [
-            'controller_name' => 'LoginController'
-        ]);
-    }
 }

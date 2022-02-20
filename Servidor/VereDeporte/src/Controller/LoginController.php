@@ -96,7 +96,6 @@ class LoginController extends AbstractController
         }
 
         return $this->render('login/register.html.twig', [
-            'controller_name' => 'LoginController',
             "form" => $form->createView()
         ]);
     }

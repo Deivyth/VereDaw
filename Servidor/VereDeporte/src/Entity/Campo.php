@@ -22,11 +22,6 @@ class Campo
      */
     private $tipo;
 
-    /**
-     * @ORM\OneToOne(targetEntity=Reserva::class, mappedBy="id_campo", cascade={"persist", "remove"})
-     */
-    private $reserva;
-
     public function getId(): ?int
     {
         return $this->id;
@@ -44,25 +39,4 @@ class Campo
         return $this;
     }
 
-    public function getReserva(): ?Reserva
-    {
-        return $this->reserva;
-    }
-
-    public function setReserva(?Reserva $reserva): self
-    {
-        // unset the owning side of the relation if necessary
-        if ($reserva === null && $this->reserva !== null) {
-            $this->reserva->setIdCampo(null);
-        }
-
-        // set the owning side of the relation if necessary
-        if ($reserva !== null && $reserva->getIdCampo() !== $this) {
-            $reserva->setIdCampo($this);
-        }
-
-        $this->reserva = $reserva;
-
-        return $this;
-    }
 }

@@ -40,22 +40,21 @@ class Equipo
     private $usuarios;
 
     /**
-     * @ORM\OneToMany(targetEntity=Reserva::class, mappedBy="id_equipo")
+     * @ORM\OneToMany(targetEntity=Reserva::class, mappedBy="equipo")
      */
     private $reservas;
 
     /**
-     * @ORM\OneToMany(targetEntity=Partido::class, mappedBy="id_local")
+     * @ORM\ManyToMany(targetEntity=Liga::class, mappedBy="apunta")
      */
-    private $partidos;
-
+    private $ligas;
 
     public function __construct()
     {
-        $this->reservas = new ArrayCollection();
-        $this->apuntas = new ArrayCollection();
-        $this->partidos = new ArrayCollection();
         $this->usuarios = new ArrayCollection();
+        $this->reservas = new ArrayCollection();
+        $this->partidos = new ArrayCollection();
+        $this->ligas = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -101,66 +100,6 @@ class Equipo
     }
 
     /**
-     * @return Collection|Reserva[]
-     */
-    public function getReservas(): Collection
-    {
-        return $this->reservas;
-    }
-
-    public function addReserva(Reserva $reserva): self
-    {
-        if (!$this->reservas->contains($reserva)) {
-            $this->reservas[] = $reserva;
-            $reserva->setIdEquipo($this);
-        }
-
-        return $this;
-    }
-
-    public function removeReserva(Reserva $reserva): self
-    {
-        if ($this->reservas->removeElement($reserva)) {
-            // set the owning side to null (unless already changed)
-            if ($reserva->getIdEquipo() === $this) {
-                $reserva->setIdEquipo(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Partido[]
-     */
-    public function getPartidos(): Collection
-    {
-        return $this->partidos;
-    }
-
-    public function addPartido(Partido $partido): self
-    {
-        if (!$this->partidos->contains($partido)) {
-            $this->partidos[] = $partido;
-            $partido->setIdLocal($this);
-        }
-
-        return $this;
-    }
-
-    public function removePartido(Partido $partido): self
-    {
-        if ($this->partidos->removeElement($partido)) {
-            // set the owning side to null (unless already changed)
-            if ($partido->getIdLocal() === $this) {
-                $partido->setIdLocal(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection|Usuario[]
      */
     public function getUsuarios(): Collection
@@ -182,6 +121,63 @@ class Equipo
     {
         if ($this->usuarios->removeElement($usuario)) {
             $usuario->removeSolicitud($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Reserva[]
+     */
+    public function getReservas(): Collection
+    {
+        return $this->reservas;
+    }
+
+    public function addReserva(Reserva $reserva): self
+    {
+        if (!$this->reservas->contains($reserva)) {
+            $this->reservas[] = $reserva;
+            $reserva->setEquipo($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReserva(Reserva $reserva): self
+    {
+        if ($this->reservas->removeElement($reserva)) {
+            // set the owning side to null (unless already changed)
+            if ($reserva->getEquipo() === $this) {
+                $reserva->setEquipo(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Liga[]
+     */
+    public function getLigas(): Collection
+    {
+        return $this->ligas;
+    }
+
+    public function addLiga(Liga $liga): self
+    {
+        if (!$this->ligas->contains($liga)) {
+            $this->ligas[] = $liga;
+            $liga->addApuntum($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLiga(Liga $liga): self
+    {
+        if ($this->ligas->removeElement($liga)) {
+            $liga->removeApuntum($this);
         }
 
         return $this;

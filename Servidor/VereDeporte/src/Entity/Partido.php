@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\PartidoRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -18,27 +20,27 @@ class Partido
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Equipo::class, inversedBy="partidos")
+     * @ORM\OneToOne(targetEntity=Equipo::class, cascade={"persist", "remove"})
      */
-    private $id_local;
+    private $local;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Equipo::class, inversedBy="partidos")
+     * @ORM\OneToOne(targetEntity=Equipo::class, cascade={"persist", "remove"})
      */
-    private $id_visitante;
+    private $visitante;
 
     /**
      * @ORM\ManyToOne(targetEntity=Usuario::class, inversedBy="partidos")
      */
-    private $id_usuario;
+    private $vigilante;
 
     /**
      * @ORM\OneToOne(targetEntity=Campo::class, cascade={"persist", "remove"})
      */
-    private $id_campo;
+    private $campo;
 
     /**
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="datetime")
      */
     private $fecha;
 
@@ -47,55 +49,66 @@ class Partido
      */
     private $resultado;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Liga::class, inversedBy="partidos")
+     */
+    private $liga;
+
+
+    public function __construct()
+    {
+        
+    }
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getIdLocal(): ?Equipo
+    public function getLocal(): ?Equipo
     {
-        return $this->id_local;
+        return $this->local;
     }
 
-    public function setIdLocal(?Equipo $id_local): self
+    public function setLocal(?Equipo $local): self
     {
-        $this->id_local = $id_local;
+        $this->local = $local;
 
         return $this;
     }
 
-    public function getIdVisitante(): ?Equipo
+    public function getVisitante(): ?Equipo
     {
-        return $this->id_visitante;
+        return $this->visitante;
     }
 
-    public function setIdVisitante(?Equipo $id_visitante): self
+    public function setVisitante(?Equipo $visitante): self
     {
-        $this->id_visitante = $id_visitante;
+        $this->visitante = $visitante;
 
         return $this;
     }
 
-    public function getIdUsuario(): ?Usuario
+    public function getVigilante(): ?Usuario
     {
-        return $this->id_usuario;
+        return $this->vigilante;
     }
 
-    public function setIdUsuario(?Usuario $id_usuario): self
+    public function setVigilante(?Usuario $vigilante): self
     {
-        $this->id_usuario = $id_usuario;
+        $this->vigilante = $vigilante;
 
         return $this;
     }
 
-    public function getIdCampo(): ?Campo
+    public function getCampo(): ?Campo
     {
-        return $this->id_campo;
+        return $this->campo;
     }
 
-    public function setIdCampo(?Campo $id_campo): self
+    public function setCampo(?Campo $campo): self
     {
-        $this->id_campo = $id_campo;
+        $this->campo = $campo;
 
         return $this;
     }
@@ -123,4 +136,17 @@ class Partido
 
         return $this;
     }
+
+    public function getLiga(): ?Liga
+    {
+        return $this->liga;
+    }
+
+    public function setLiga(?Liga $liga): self
+    {
+        $this->liga = $liga;
+
+        return $this;
+    }
+
 }

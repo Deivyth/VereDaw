@@ -34,9 +34,20 @@ class Liga
      */
     private $fecha_fin;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Equipo::class, inversedBy="ligas")
+     */
+    private $apunta;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Partido::class, mappedBy="liga")
+     */
+    private $partidos;
+
     public function __construct()
     {
-        $this->apuntas = new ArrayCollection();
+        $this->apunta = new ArrayCollection();
+        $this->partidos = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -76,6 +87,60 @@ class Liga
     public function setFechaFin(?\DateTimeInterface $fecha_fin): self
     {
         $this->fecha_fin = $fecha_fin;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Equipo[]
+     */
+    public function getApunta(): Collection
+    {
+        return $this->apunta;
+    }
+
+    public function addApuntum(Equipo $apuntum): self
+    {
+        if (!$this->apunta->contains($apuntum)) {
+            $this->apunta[] = $apuntum;
+        }
+
+        return $this;
+    }
+
+    public function removeApuntum(Equipo $apuntum): self
+    {
+        $this->apunta->removeElement($apuntum);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Partido[]
+     */
+    public function getPartidos(): Collection
+    {
+        return $this->partidos;
+    }
+
+    public function addPartido(Partido $partido): self
+    {
+        if (!$this->partidos->contains($partido)) {
+            $this->partidos[] = $partido;
+            $partido->setLiga($this);
+        }
+
+        return $this;
+    }
+
+    public function removePartido(Partido $partido): self
+    {
+        if ($this->partidos->removeElement($partido)) {
+            // set the owning side to null (unless already changed)
+            if ($partido->getLiga() === $this) {
+                $partido->setLiga(null);
+            }
+        }
 
         return $this;
     }

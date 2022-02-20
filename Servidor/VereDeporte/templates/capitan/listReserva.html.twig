@@ -1,0 +1,43 @@
+{% extends 'index.html.twig'%}
+
+{% block body %}
+    <script>
+        function delReserva(id,url){
+            var data = new FormData();
+            data.append("id", id);
+
+            fetch(url, {
+                method: "POST",
+                body: data
+            })
+            .then(resp => resp.json())
+            .then(data => {})
+            .then(() => {window.location.reload()})
+            .catch(error => {console.log(error)})
+        };
+    </script>
+
+    <div class="col-6">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+              <th scope="col">Vigilante</th>
+              <th scope="col">Campo</th>
+              <th scope="col">Fecha y hora</th>
+            </tr>
+        </thead>
+        <tbody>
+    {% for reserva in reservas %}
+        <tr>
+            <td scope="row">{{reserva.vigilante.nombre}}</td>
+            <td scope="row">{{reserva.campo.tipo}}</td>
+            <td scope="row">{{reserva.fecha | date("Y-m-d H:i")}}</td>
+            <td class="text-center"><a class="btn btn-danger" onclick="delReserva('{{reserva.id}}', '{{ path("del_reserva")}}')">Eliminar</a></td>
+        </tr>
+    {% endfor %}
+        </tbody>
+    </table>
+     <a class="btn btn-primary col-12 mt-1" href={{ path('inicio') }}>Volver</a>
+    </div>
+   
+{% endblock %}

@@ -42,7 +42,7 @@
     </script>
 
     <a class="btn btn-primary" onclick="addUserToTeam('{{usuario.id}}','{{equipo.id}}','{{ path("add_at_team") }}')">Añadir</a>
-    <a class="btn btn-primary" onclick="delUserToRequest('{{usuario.id}}','{{equipo.id}}','{{ path("del_at_request") }}')">Eliminar</a>
+    <a class="btn btn-danger" onclick="delUserToRequest('{{usuario.id}}','{{equipo.id}}','{{ path("del_at_request") }}')">Eliminar</a>
   {% endfor %}
-  
+  <a class="btn btn-primary col-12 mt-1" href={{ path('inicio') }}>Volver</a>
 {% endblock %}

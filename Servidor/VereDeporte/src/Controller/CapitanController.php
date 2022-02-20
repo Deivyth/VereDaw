@@ -3,10 +3,15 @@
 namespace App\Controller;
 
 use App\Entity\Equipo;
-use App\Entity\Solicita;
+use App\Entity\Reserva;
 use App\Entity\Usuario;
+use App\Form\ReservaType;
+use DateInterval;
+use DatePeriod;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -17,15 +22,65 @@ class CapitanController extends AbstractController
      */
     public function listPlayers(EntityManagerInterface $em): Response
     {
-        $usuario = $em -> getRepository(Usuario::class) -> findOneBy(["email" => $this -> getUser() -> getUserIdentifier()]);
-        
-        $equipo = $usuario -> getEquipo();
+        $equipo = $this -> getUser() -> getEquipo();
         $solicitudes = $equipo -> getUsuarios();
         
         return $this-> render('capitan/players.html.twig', [
             'controller_name' => 'CapitanController',
             "solicitudes" => $solicitudes,
             "equipo" => $equipo
+        ]);
+    }
+
+    /**
+     * @Route("/capitan/reserva", name="add_reserva")
+     */
+    public function addReserva(EntityManagerInterface $em, Request $request){
+        
+        $error = "";
+
+        $reserva = new Reserva();
+        $reserva -> setFecha(new \DateTime("today"));
+
+        $form = $this -> createForm(ReservaType::class, $reserva);
+        $form -> handleRequest($request);
+
+        if($form -> isSubmitted() && $form -> isValid()){
+            $equipo = $this -> getUser() -> getEquipo();
+            $reserva -> setEquipo($equipo);
+
+            $fecha = $form -> get("fecha")->getData();
+            $hora = $form -> get("hora")-> getData();
+
+            $dateTime = new DateTime($fecha -> format("d-m-Y")." ".$hora->format("H:i:s"));
+          /*$intervalo = new DateInterval("PT90i");
+            $periodo = new DatePeriod($dateTime, $intervalo); */
+
+            $reserva -> setFecha($dateTime);
+ 
+            try {
+                $em->persist($reserva);
+                $em->flush();
+            } catch (\Exception $e) {
+                return new Response("Esto no va");
+            }
+        }
+
+        return $this->render('capitan/reserva.html.twig', [
+            "form" => $form->createView(),
+            "error" => $error
+        ]);
+    }
+
+
+    /**
+     * @Route("/capitan/listarReserva", name="list_reserva")
+     */
+    public function listReserva(){
+        $reservas = $this -> getUser() -> getEquipo() -> getReservas();
+
+        return $this->render('capitan/listReserva.html.twig', [
+            "reservas" => $reservas
         ]);
     }
 
@@ -69,10 +124,28 @@ class CapitanController extends AbstractController
                 $em -> persist($usuario);
                 $em -> flush();
             } catch (\Throwable $th) {
-                //throw $th;
+                return json_encode($th);
             }
 
             return $this-> redirect("/capitan/solicitudes");
         }
+    }
+
+    /**
+     * @Route("/capitan/eliminarReserva", name="del_reserva")
+     */
+    public function delReserva(EntityManagerInterface $em){
+        if(isset($_POST["id"])){
+
+            $reserva = $em -> getRepository(Reserva::class) -> find($_POST["id"]);
+
+            try {
+                $em -> remove($reserva);
+                $em -> flush();
+            } catch (\Throwable $th) {
+                return json_encode($th);
+            }
+        }
+        return $this-> redirect("/capitan/listarReserva");
     }
 }

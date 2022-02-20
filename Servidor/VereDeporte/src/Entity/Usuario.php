@@ -48,11 +48,6 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
     private $photo;
 
     /**
-     * @ORM\OneToMany(targetEntity=Reserva::class, mappedBy="id_usuario")
-     */
-    private $reservas;
-
-    /**
      * @ORM\ManyToOne(targetEntity=Equipo::class, inversedBy="usuarios")
      */
     private $equipo;
@@ -61,12 +56,22 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\ManyToMany(targetEntity=Equipo::class, inversedBy="usuarios")
      */
     private $solicitud;
- 
+
+    /**
+     * @ORM\OneToMany(targetEntity=Reserva::class, mappedBy="vigilante")
+     */
+    private $reservas;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Partido::class, mappedBy="vigilante")
+     */
+    private $partidos;
 
     public function __construct()
     {
-        $this->reservas = new ArrayCollection();
         $this->solicitud = new ArrayCollection();
+        $this->reservas = new ArrayCollection();
+        $this->partidos = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -204,37 +209,6 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-
-    /**
-     * @return Collection|Reserva[]
-     */
-    public function getReservas(): Collection
-    {
-        return $this->reservas;
-    }
-
-    public function addReserva(Reserva $reserva): self
-    {
-        if (!$this->reservas->contains($reserva)) {
-            $this->reservas[] = $reserva;
-            $reserva->setIdUsuario($this);
-        }
-
-        return $this;
-    }
-
-    public function removeReserva(Reserva $reserva): self
-    {
-        if ($this->reservas->removeElement($reserva)) {
-            // set the owning side to null (unless already changed)
-            if ($reserva->getIdUsuario() === $this) {
-                $reserva->setIdUsuario(null);
-            }
-        }
-
-        return $this;
-    }
-
     /**
      * @return Collection|Equipo[]
      */
@@ -255,6 +229,66 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeSolicitud(Equipo $solicitud): self
     {
         $this->solicitud->removeElement($solicitud);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Reserva[]
+     */
+    public function getReservas(): Collection
+    {
+        return $this->reservas;
+    }
+
+    public function addReserva(Reserva $reserva): self
+    {
+        if (!$this->reservas->contains($reserva)) {
+            $this->reservas[] = $reserva;
+            $reserva->setVigilante($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReserva(Reserva $reserva): self
+    {
+        if ($this->reservas->removeElement($reserva)) {
+            // set the owning side to null (unless already changed)
+            if ($reserva->getVigilante() === $this) {
+                $reserva->setVigilante(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Partido[]
+     */
+    public function getPartidos(): Collection
+    {
+        return $this->partidos;
+    }
+
+    public function addPartido(Partido $partido): self
+    {
+        if (!$this->partidos->contains($partido)) {
+            $this->partidos[] = $partido;
+            $partido->setVigilante($this);
+        }
+
+        return $this;
+    }
+
+    public function removePartido(Partido $partido): self
+    {
+        if ($this->partidos->removeElement($partido)) {
+            // set the owning side to null (unless already changed)
+            if ($partido->getVigilante() === $this) {
+                $partido->setVigilante(null);
+            }
+        }
 
         return $this;
     }
