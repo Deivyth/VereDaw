@@ -1,0 +1,41 @@
+{% extends "index.html.twig" %}
+
+{% block body %}
+
+<div class="col-8">
+    <h3>Reservas</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Equipo</th>
+              <th scope="col">Campo</th>
+              <th scope="col">Fecha y hora</th>
+            </tr>
+        </thead>
+        <tbody>
+    {% for reserva in reservas %}
+        <tr>
+            <td scope="row">{{reserva.id}}</td>
+            <td scope="row">{{reserva.equipo.nombre}}</td>
+            <td scope="row">{{reserva.campo.tipo}}</td>
+            <td scope="row">{{reserva.fecha | date("Y-m-d H:i")}}</td>
+        </tr>
+    {% endfor %}
+        </tbody>
+    </table>
+    
+</div>
+<div class="col-2">
+    {{form_start(form)}}
+    {{form_label(form.id,"Id reserva:")}}
+    {{form_widget(form.id)}}
+    {{form_label(form.nombre,"Vigilante:")}}
+    {{form_widget(form.nombre)}}
+    {{form_widget(form.submit)}}
+    {{form_end(form)}}
+</div>
+
+ <a class="btn btn-primary col-4 mt-5" href={{ path('inicio') }}>Volver</a>
+
+{% endblock %}

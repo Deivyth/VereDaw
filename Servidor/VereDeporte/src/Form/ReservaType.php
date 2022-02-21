@@ -5,7 +5,7 @@ namespace App\Form;
 use App\Entity\Campo;
 use App\Entity\Reserva;
 use App\Entity\Usuario;
-
+use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
@@ -23,6 +23,11 @@ class ReservaType extends AbstractType
         $builder
             ->add('vigilante',EntityType::class, array(
                 "class" => Usuario::class,
+                "query_builder" => function(EntityRepository $er){
+                    return $er -> createQueryBuilder("u")
+                        -> andWhere("JSON_CONTAINS(u.roles , :rol) = 1")
+                        -> setParameter("rol", '"ROLE_PROFESOR"');
+                },
                 "choice_label" => "nombre",
                 "attr" => ["class" => "mt-1 col-12"]
             ))

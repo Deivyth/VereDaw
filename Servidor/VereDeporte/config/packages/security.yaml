@@ -34,9 +34,10 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-       - { path: /profesor, roles: ROLE_PROFESOR }
-       - { path: /jugador, roles: ROLE_JUGADOR }
-
+       - { path: ^/profesor, roles: ROLE_PROFESOR }
+       - { path: ^/capitan, roles: ROLE_CAPITAN}
+       - { path: ^/jugador, roles: ROLE_JUGADOR}
+    
 when@test:
     security:
         password_hashers:

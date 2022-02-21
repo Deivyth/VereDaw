@@ -50,6 +50,8 @@ class CapitanController extends AbstractController
         $form -> handleRequest($request);
 
         if($form -> isSubmitted() && $form -> isValid()){
+            $reservas = $em -> getRepository(Reserva::class) -> findAll();
+
             $equipo = $this -> getUser() -> getEquipo();
             $reserva -> setEquipo($equipo);
 
@@ -57,7 +59,13 @@ class CapitanController extends AbstractController
             $hora = $form -> get("hora")-> getData();
 
             $dateTime = new DateTime($fecha -> format("d-m-Y")." ".$hora->format("H:i:s"));
-          /*$intervalo = new DateInterval("PT90i");
+          
+            foreach ($reservas as $reservaBD) {
+                if($reservaBD -> fecha == $dateTime){
+                    $error = "Fecha ya escogida";
+                }
+            }
+            /*$intervalo = new DateInterval("PT90i");
             $periodo = new DatePeriod($dateTime, $intervalo); */
 
             $reserva -> setFecha($dateTime);
@@ -66,7 +74,7 @@ class CapitanController extends AbstractController
                 $em->persist($reserva);
                 $em->flush();
             } catch (\Exception $e) {
-                return new Response("Esto no va");
+                $error = "Vacalao";
             }
         }
 
@@ -140,7 +148,7 @@ class CapitanController extends AbstractController
                 try {
                     $em -> persist($usuario);
                     $em -> flush();
-                } catch (\Throwable $th) {
+                } catch (\Exception $th) {
                     return new Response($th);
                 }
             }else{

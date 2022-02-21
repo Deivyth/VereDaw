@@ -27,11 +27,11 @@ class EquipoType extends AbstractType
         ))
         ->add("capitan", EntityType::class, array(
             "class" => Usuario::class,
-/*             "query_builder" => function(EntityRepository $er){
+            "query_builder" => function(EntityRepository $er){
                 return $er -> createQueryBuilder("u")
-                    -> where("u.roles = :rol")
-                    -> setParameter("rol", ["ROLE_JUGADOR"]);
-            }, */
+                    -> andWhere("JSON_CONTAINS(u.roles , :rol) = 1")
+                    -> setParameter("rol", '"ROLE_JUGADOR"');
+            },
             "choice_label" => "nombre",
             "attr" => ["class" => "mt-1"]
         ))

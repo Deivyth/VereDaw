@@ -19,7 +19,7 @@ class JugadorController extends AbstractController
      * @Route("/jugador/solicitar_equipo", name="request_team")
      */
     public function request_team(Request $request,EntityManagerInterface $em): Response
-    {
+    {   
 
         $email = $this -> getUser() -> getUserIdentifier();
         $usuario = $em -> getRepository(Usuario::class) -> findOneBy(["email" => $email]);
