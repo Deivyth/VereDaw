@@ -35,11 +35,6 @@ class Partido
     private $vigilante;
 
     /**
-     * @ORM\OneToOne(targetEntity=Campo::class, cascade={"persist", "remove"})
-     */
-    private $campo;
-
-    /**
      * @ORM\Column(type="datetime")
      */
     private $fecha;
@@ -53,6 +48,11 @@ class Partido
      * @ORM\ManyToOne(targetEntity=Liga::class, inversedBy="partidos")
      */
     private $liga;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Campo::class, inversedBy="partidos")
+     */
+    private $campo;
 
 
     public function __construct()
@@ -101,18 +101,6 @@ class Partido
         return $this;
     }
 
-    public function getCampo(): ?Campo
-    {
-        return $this->campo;
-    }
-
-    public function setCampo(?Campo $campo): self
-    {
-        $this->campo = $campo;
-
-        return $this;
-    }
-
     public function getFecha(): ?\DateTimeInterface
     {
         return $this->fecha;
@@ -145,6 +133,18 @@ class Partido
     public function setLiga(?Liga $liga): self
     {
         $this->liga = $liga;
+
+        return $this;
+    }
+
+    public function getCampo(): ?Campo
+    {
+        return $this->campo;
+    }
+
+    public function setCampo(?Campo $campo): self
+    {
+        $this->campo = $campo;
 
         return $this;
     }

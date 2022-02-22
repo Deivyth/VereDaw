@@ -2,18 +2,16 @@
 
 {% block body %}
     <script>
-        function delReserva(id,url){
+        function delReserva(button,id){
             var data = new FormData();
             data.append("id", id);
 
-            fetch(url, {
+            fetch("/capitan/eliminarReserva", {
                 method: "POST",
                 body: data
             })
-            .then(resp => resp.json())
-            .then(data => {
-                console.log(data);
-                window.location.reload();
+            .then(() => {
+                button.parentNode.parentNode.remove();
             })
             .catch(error => console.log(error))
         };
@@ -34,7 +32,7 @@
             <td scope="row">{{reserva.vigilante.nombre}}</td>
             <td scope="row">{{reserva.campo.tipo}}</td>
             <td scope="row">{{reserva.fecha | date("Y-m-d H:i")}}</td>
-            <td class="text-center"><a class="btn btn-danger" onclick="delReserva('{{reserva.id}}', '{{ path("del_reserva")}}')">Eliminar</a></td>
+            <td class="text-center"><a class="btn btn-danger" onclick="delReserva(this,'{{reserva.id}}')">Eliminar</a></td>
         </tr>
     {% endfor %}
         </tbody>

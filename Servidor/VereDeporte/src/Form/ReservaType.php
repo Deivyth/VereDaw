@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\Campo;
 use App\Entity\Reserva;
 use App\Entity\Usuario;
+use DateTime;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -19,6 +20,10 @@ class ReservaType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $years = array();
+        $now = new DateTime("now");
+        array_push($years, $now -> format("y"));
+        array_push($years, $now -> format("y")+1);
 
         $builder
             ->add('vigilante',EntityType::class, array(
@@ -37,11 +42,12 @@ class ReservaType extends AbstractType
                 "attr" => ["class" => "mt-1 col-12"]
             ))
             ->add('fecha', DateType::class, array(
-                "attr" => ["class" => "mt-1 p-0 col-auto"]
+                "attr" => ["class" => "mt-1 p-0 col-auto"],
+                "years" => $years
             ))
             ->add("hora", TimeType::class, array(
                 "mapped"=>false,
-                "hours" => range(12,24),
+                "hours" => range(12,20),
                 "minutes" => [0,30],
                 "attr" => ["class" => "mt-1 col-6"]
             ))

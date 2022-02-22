@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Campo;
 use App\Entity\Equipo;
 use App\Entity\Liga;
 use App\Entity\Reserva;
@@ -42,6 +43,7 @@ class CapitanController extends AbstractController
     public function addReserva(EntityManagerInterface $em, Request $request){
         
         $error = "";
+        $comprobacion = false;
 
         $reserva = new Reserva();
         $reserva -> setFecha(new \DateTime("today"));
@@ -50,32 +52,46 @@ class CapitanController extends AbstractController
         $form -> handleRequest($request);
 
         if($form -> isSubmitted() && $form -> isValid()){
-            $reservas = $em -> getRepository(Reserva::class) -> findAll();
+
+            $fecha = $form -> get("fecha")-> getData();
+            $hora = $form -> get("hora")-> getData();
+            $campo = $form -> get("campo") -> getData();
+
+            $dateTime = new DateTime($fecha -> format("d-m-Y")." ".$hora->format("H:i"));
 
             $equipo = $this -> getUser() -> getEquipo();
+
             $reserva -> setEquipo($equipo);
+            $reserva -> setFecha($dateTime);
 
-            $fecha = $form -> get("fecha")->getData();
-            $hora = $form -> get("hora")-> getData();
-
-            $dateTime = new DateTime($fecha -> format("d-m-Y")." ".$hora->format("H:i:s"));
-          
-            foreach ($reservas as $reservaBD) {
-                if($reservaBD -> fecha == $dateTime){
-                    $error = "Fecha ya escogida";
+            $reservas = $campo -> getReservas();
+            
+            foreach($reservas as $reservaBD){
+                $df = $reservaBD -> getFecha() -> diff($dateTime);
+                $minutos = $df-> i + ($df-> h * 60) + ($df -> d * 1440);
+                
+                if($minutos >= 90){
+                    $comprobacion = true;
+                }else{
+                    $comprobacion = false;
+                    break;
                 }
             }
+
+            if($comprobacion == true || sizeof($reservas) == 0){
+                try {
+                    $em->persist($reserva);
+                    $em->flush();
+                } catch (\Exception $e) {
+                    $error = "Error con servidor";
+                }
+                $error = "Reserva creada";
+            }else{
+                $error = "Campo y fecha ya reservada"; 
+            }
+
             /*$intervalo = new DateInterval("PT90i");
             $periodo = new DatePeriod($dateTime, $intervalo); */
-
-            $reserva -> setFecha($dateTime);
- 
-            try {
-                $em->persist($reserva);
-                $em->flush();
-            } catch (\Exception $e) {
-                $error = "Vacalao";
-            }
         }
 
         return $this->render('capitan/reserva.html.twig', [
@@ -173,11 +189,10 @@ class CapitanController extends AbstractController
                 $em -> persist($usuario);
                 $em -> flush();
             } catch (\Throwable $th) {
-                return json_encode($th);
+                //return json_encode($th);
             }
-
-            return $this-> redirect("/capitan/solicitudes");
         }
+        return $this-> redirect("/capitan/solicitudes");
     }
 
     /**
@@ -192,11 +207,9 @@ class CapitanController extends AbstractController
                 $em -> remove($reserva);
                 $em -> flush();
             } catch (\Throwable $th) {
-                return json_encode($th);
+                //return json_encode($th);
             }
-
-            return $this-> redirect("/capitan/listarReserva");
         }
-       
+        return $this-> redirect("/capitan/solicitudes");
     }
 }

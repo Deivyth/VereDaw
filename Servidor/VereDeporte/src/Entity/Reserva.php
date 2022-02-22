@@ -28,14 +28,15 @@ class Reserva
     private $vigilante;
 
     /**
-     * @ORM\OneToOne(targetEntity=Campo::class)
-     */
-    private $campo;
-
-    /**
      * @ORM\Column(type="datetime")
      */
     private $fecha;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Campo::class, inversedBy="reservas")
+     */
+    private $campo;
+
 
     public function getId(): ?int
     {
@@ -66,6 +67,18 @@ class Reserva
         return $this;
     }
 
+    public function getFecha(): ?\DateTimeInterface
+    {
+        return $this->fecha;
+    }
+
+    public function setFecha(\DateTimeInterface $fecha): self
+    {
+        $this->fecha = $fecha;
+
+        return $this;
+    }
+
     public function getCampo(): ?Campo
     {
         return $this->campo;
@@ -78,15 +91,5 @@ class Reserva
         return $this;
     }
 
-    public function getFecha(): ?\DateTimeInterface
-    {
-        return $this->fecha;
-    }
 
-    public function setFecha(\DateTimeInterface $fecha): self
-    {
-        $this->fecha = $fecha;
-
-        return $this;
-    }
 }
