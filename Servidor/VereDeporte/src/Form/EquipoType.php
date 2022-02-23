@@ -23,17 +23,18 @@ class EquipoType extends AbstractType
             "attr" => ["class" => "col-12","placeholder"=> "Name"]
         ))
         ->add("photo", FileType::class, array(
-            "attr" => ["class" => "mt-1"]
+            "attr" => ["class" => "col-12 mt-1"]
         ))
         ->add("capitan", EntityType::class, array(
             "class" => Usuario::class,
             "query_builder" => function(EntityRepository $er){
                 return $er -> createQueryBuilder("u")
+                    -> where("u.equipo IS NULL")
                     -> andWhere("JSON_CONTAINS(u.roles , :rol) = 1")
                     -> setParameter("rol", '"ROLE_JUGADOR"');
             },
             "choice_label" => "nombre",
-            "attr" => ["class" => "mt-1"]
+            "attr" => ["class" => "col-12 mt-1"]
         ))
         ->add("guardar", SubmitType::class, array(
             "label" => "Crear Equipo",

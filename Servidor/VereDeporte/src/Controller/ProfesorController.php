@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Campo;
 use App\Entity\Equipo;
 use App\Entity\Liga;
 use App\Entity\Partido;
@@ -9,9 +10,10 @@ use App\Entity\Reserva;
 use App\Entity\Usuario;
 use App\Form\EquipoType;
 use App\Form\LoginType;
-
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Exception;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -23,25 +25,18 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Form\FormTypeInterface;
+use Symfony\Component\Validator\Constraints\Date;
 use Symfony\Config\FosRest\ZoneConfig;
 
 class ProfesorController extends AbstractController
 {
-    /**
-     * @Route("/profesor", name="profesor")
-     */
-    public function index(): Response
-    {
-        return $this->render('profesor/index.html.twig', [
-            'controller_name' => 'ProfesorController',
-        ]);
-    }
 
     /**
      * @Route("/profesor/registro", name="add_profesor")
      */
     public function registro(UserPasswordHasherInterface $passwordHasher, Request $request, EntityManagerInterface $em): Response
     {
+        $error = "";
         $user = new Usuario();
 
         $form = $this->createForm(LoginType::class, $user);
@@ -63,14 +58,14 @@ class ProfesorController extends AbstractController
                 } catch (\Exception $e) {
                     return new Response("Esto no va");
                 }
-                return $this->redirectToRoute("profesor");
+                return $this->redirectToRoute("login");
             } else {
-                return new Response("Contraseñas diferentes");
+                $error = "Contraseña diferentes";
             }
         }
 
         return $this->render('login/register.html.twig', [
-            'controller_name' => 'LoginController',
+            "error" => $error,
             "form" => $form->createView()
         ]);
     }
@@ -80,6 +75,7 @@ class ProfesorController extends AbstractController
      */
     public function equipo(Request $request, EntityManagerInterface $em): Response
     {
+        $error = "";
         $equipo = new Equipo();
 
         $form = $this->createForm(EquipoType::class, $equipo);
@@ -87,18 +83,20 @@ class ProfesorController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $form -> get("capitan") -> getData() -> setRoles(["ROLE_CAPITAN"]);
+            $form -> get("capitan") -> getData() -> setEquipo($equipo);
             $equipo -> setCapitan($form -> get("capitan") -> getData());
 
             try {
                 $em->persist($equipo);
                 $em->flush();
+                $error = "Equipo creado con exito";
             } catch (\Exception $e) {
-                return new Response("Esto no va");
+                $error = "Error del servidor";
             }
         }
 
         return $this->render('profesor/equipo.html.twig', [
-            'controller_name' => 'LoginController',
+            'error' => $error,
             'form' => $form->createView()
         ]);
     }
@@ -132,7 +130,7 @@ class ProfesorController extends AbstractController
             }
         }
 
-        return $this->render('profesor/equipo.html.twig', [
+        return $this->render('profesor/liga.html.twig', [
             'form' => $form->createView()
         ]);
     }
@@ -262,11 +260,81 @@ class ProfesorController extends AbstractController
     }
 
     //AJAX
+    /**
+     * @Route("/profesor/crearLiga", name="crearLiga")
+     */
     public function addmatch(EntityManagerInterface $em){
-        $liga = $em -> getRepository(Liga::class) -> find($_POST["id"]);
+        if(isset($_POST["id"])){
+            $usuarios = $em -> getRepository(Usuario::class) -> findAll();
+            $liga = $em -> getRepository(Liga::class) -> find($_POST["id"]);
+            $campos = $em -> getRepository(Campo::class) -> findAll();
+            $equipos = $liga -> getApunta();
+            $numeroEquipos = sizeof($equipos)-1;
+            $fecha = new DateTime("now");
 
-        $partido = new Partido();
+            $profesores = [];
+            foreach($usuarios as $usuario){
+                if($usuario -> getRoles()[0] == "ROLE_PROFESOR"){
+                    $profesores[] = $usuario;
+                }
+            }
 
+/*             $fecha = $fecha -> modify("next Saturday");
+            $partido = new Partido();
+
+            $partido -> setLocal($equipos[0]);
+            $partido -> setVisitante($equipos[sizeof($equipos)-1]);
+            $partido -> setVigilante($profesores[rand(0,sizeof($profesores))]);
+            $partido -> setFecha($fecha);
+            $partido -> setCampo($campos[0]);
+
+            try{
+                $em -> persist($partido);
+                $em -> flush();
+            }catch(\Exception $e){
+                return new Response($e);
+            } */
+
+            for($i = 0; $i < $numeroEquipos; $i++){
+                $fecha = new DateTime($fecha -> modify("next Saturday"));
+                $partido = new Partido();
+    
+                $partido -> setLocal($equipos[0]);
+                $partido -> setVisitante($equipos[5]);
+                $partido -> setVigilante($profesores[rand(0,sizeof($profesores)-1)]);
+                $partido -> setFecha($fecha);
+                $partido -> setCampo($campos[0]);
+                $partido -> setLiga($liga);
+    
+                try{
+                    $em -> persist($partido);
+                    $em -> flush();
+                }catch(\Exception $e){
+                    return new Response($e);
+                }
+                /* for($e = $numeroEquipos; $e >= 0; $e--){
+                    if($equipos[$i] -> getId() != $equipos[$e] -> getId()){
+                        $fecha = $fecha -> modify("next Saturday");
+                        $partido = new Partido();
+
+                        $partido -> setLocal($equipos[$i]);
+                        $partido -> setVisitante($equipos[$e]);
+                        $partido -> setVigilante($profesores[rand(0,sizeof($profesores))]);
+                        $partido -> setFecha($fecha);
+                        $partido -> setCampo($campos[0]);
+
+                        try{
+                            $em -> persist($partido);
+                            $em -> flush();
+                        }catch(\Exception $e){
+                            return new Response($e);
+                        }
+                    }
+                } */
+            }
+        }
+
+        return $this -> redirect("/profesor/ligas");
     }
 
     /**

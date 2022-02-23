@@ -66,6 +66,8 @@ class CapitanController extends AbstractController
 
             $reservas = $campo -> getReservas();
             
+            $dia = $fecha -> format("D");
+            
             foreach($reservas as $reservaBD){
                 $df = $reservaBD -> getFecha() -> diff($dateTime);
                 $minutos = $df-> i + ($df-> h * 60) + ($df -> d * 1440);
@@ -78,20 +80,23 @@ class CapitanController extends AbstractController
                 }
             }
 
-            if($comprobacion == true || sizeof($reservas) == 0){
-                try {
-                    $em->persist($reserva);
-                    $em->flush();
-                } catch (\Exception $e) {
-                    $error = "Error con servidor";
-                }
-                $error = "Reserva creada";
+            //COMPROBACION DE ERRORES
+            if($dia == "Sat" || $dia == "Sun"){
+                $error = "Solo se puede crear entre semana";
             }else{
-                $error = "Campo y fecha ya reservada"; 
+                if($comprobacion == true || sizeof($reservas) == 0){
+                    try {
+                        $em->persist($reserva);
+                        $em->flush();
+                    } catch (\Exception $e) {
+                        $error = "Error con servidor";
+                    }
+                    $error = "Reserva creada";
+                }else{
+                    $error = "Campo y fecha ya reservada";
+                }
             }
 
-            /*$intervalo = new DateInterval("PT90i");
-            $periodo = new DatePeriod($dateTime, $intervalo); */
         }
 
         return $this->render('capitan/reserva.html.twig', [
@@ -155,8 +160,8 @@ class CapitanController extends AbstractController
      */
     public function addTeamAtUser(EntityManagerInterface $em): Response{
         if(isset($_POST["equipo"]) && isset($_POST["jugador"])){
-            $usuario = $em -> getRepository(Usuario::class) -> find($_POST["jugador"]);
-            $equipo = $em -> getRepository(Equipo::class) -> find($_POST["equipo"]);
+            $usuario = $em -> getRepository(Usuario::class) -> find($_POST["id"]);
+            $equipo = $this -> getUser() -> getEquipo();
 
             if($usuario -> getEquipo() == null){
                 $usuario -> setEquipo($equipo);
@@ -165,7 +170,7 @@ class CapitanController extends AbstractController
                     $em -> persist($usuario);
                     $em -> flush();
                 } catch (\Exception $th) {
-                    return new Response($th);
+                    return new Response("Error con el servidor");
                 }
             }else{
                 return new Response("Este jugador ya esta fichado");
@@ -180,16 +185,15 @@ class CapitanController extends AbstractController
      */
     public function delAtRequest(EntityManagerInterface $em){
         if(isset($_POST["equipo"]) && isset($_POST["jugador"])){
-
-            $usuario = $em -> getRepository(Usuario::class) -> find($_POST["jugador"]);
-            $equipo = $em -> getRepository(Equipo::class) -> find($_POST["equipo"]);
+            $usuario = $em -> getRepository(Usuario::class) -> find($_POST["id"]);
+            $equipo = $this -> getUser() -> getEquipo();
             
             $usuario -> removeSolicitud($equipo);
             try {
                 $em -> persist($usuario);
                 $em -> flush();
             } catch (\Throwable $th) {
-                //return json_encode($th);
+                return new Response("Error con el servidor");
             }
         }
         return $this-> redirect("/capitan/solicitudes");

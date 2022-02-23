@@ -3,14 +3,7 @@
     {% block body %}
 		<div class="col-6 mt-3">
         	{{form_start(form)}}
-			{{form_widget(form.nombre)}}
-			{{form_widget(form.photo)}}
-			{{form_label(form.capitan, "Capitan: ")}}
-			{{form_widget(form.capitan)}}
-			{% if error %}
-				{{error}}
-			{% endif %}
-			{{form_widget(form.guardar)}}
+			{{form_widget(form)}}
 			<a class="btn btn-primary col-12 mt-1" href={{ path('inicio') }}>Volver</a>
 			{{form_end(form)}}
 		</div>

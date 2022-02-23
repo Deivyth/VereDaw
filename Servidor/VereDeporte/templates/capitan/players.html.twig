@@ -3,36 +3,32 @@
 {% block body %}
 <script>
 
-        function addUserToTeam(nombre,equipo,url){ 
+        function addUserToTeam(button,id){ 
 
           var data = new FormData();
-          data.append("jugador",nombre);
-          data.append("equipo",equipo);
+          data.append("id",id);
 
-          fetch(url,{
+          fetch("/capitan/fichar",{
               method: "POST",
               body: data
           })
-          .then( resp => resp.json())
           .then( data => {
-              window.location.reload();
+              button.parentNode.remove();
           })
           .catch( error => { console.log(error) });
         };
 
-        function delUserToRequest(nombre,equipo,url){ 
+        function delUserToRequest(button,id){ 
 
           var data = new FormData();
-          data.append("jugador",nombre);
-          data.append("equipo",equipo);
+          data.append("id",id);
 
-          fetch(url,{
+          fetch("/capitan/eliminar",{
               method: "POST",
               body: data
           })
-          .then( resp => resp.json())
-          .then( data => {
-              window.location.reload();
+          .then( () => {
+              button.parentNode.remove();
           })
           .catch( error => { console.log(error) });
         };
@@ -42,8 +38,8 @@
     {% for usuario in solicitudes %}
       <div class = "row">
         <h3 class="col-auto">{{usuario.nombre}}</h3>
-        <a class=" btn btn-primary col-auto m-1" onclick="addUserToTeam('{{usuario.id}}','{{equipo.id}}','{{ path("add_at_team") }}')">Añadir</a>
-        <a class=" btn btn-danger col-auto m-1" onclick="delUserToRequest('{{usuario.id}}','{{equipo.id}}','{{ path("del_at_request") }}')">Eliminar</a>
+        <a class=" btn btn-primary col-auto m-1" onclick="addUserToTeam(this,'{{usuario.id}}')">Añadir</a>
+        <a class=" btn btn-danger col-auto m-1" onclick="delUserToRequest(this,'{{usuario.id}}')">Eliminar</a>
       </div>
   {% endfor %}
   <a class="btn btn-primary col-12 mt-1" href={{ path('inicio') }}>Volver</a>

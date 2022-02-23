@@ -2,14 +2,24 @@
 
 {% block body %}
     <script>
-        function crearLiga(){
-            
+        function crearLiga(button,id){
+            console.log(id);
+            var data = new FormData();
+             data.append("id",id);
+
+          fetch("/profesor/crearLiga",{
+              method: "POST",
+              body: data
+          })
+          .then( data => {})
+          .catch( error => { console.log(error) });
         }
     </script>
 
     <div class="col-6">
         {% for liga in ligas %}
             {% if liga.fechaFin == null %}
+            <div>
                 <h3>{{liga.nombre}}</h3>
                 <ul class="list-group list-group-flush">
                     {% for equipo in liga.apunta %}
@@ -17,8 +27,9 @@
                     {% endfor %}
                 </ul>
                     {% if liga.apunta|length == 6 %}
-                        <a class="btn btn-primary mt-1 mb-1 onclick()">Crear liga</a>
+                        <a class="btn btn-primary mt-1 mb-1" onclick = "crearLiga(this,'{{liga.id}}')">Crear liga</a>
                     {% endif %}
+            </div>
             {% endif %}
         {% endfor %}
         <a class="btn btn-primary col-12 mt-1" href={{ path('inicio') }}>Volver</a>

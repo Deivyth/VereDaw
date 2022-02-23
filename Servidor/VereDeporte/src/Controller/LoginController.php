@@ -68,6 +68,7 @@ class LoginController extends AbstractController
      */
     public function registro(UserPasswordHasherInterface $passwordHasher, Request $request, EntityManagerInterface $em): Response
     {
+        $error = "";
         $user = new Usuario();
 
         $form = $this->createForm(LoginType::class, $user);
@@ -86,17 +87,20 @@ class LoginController extends AbstractController
                 try {
                     $em->persist($user);
                     $em->flush();
+                    $error = "Usuario creado con exito";
                 } catch (\Exception $e) {
                     return new Response("Esto no va");
                 }
-                return $this->redirectToRoute("login");
+
+                return $this -> redirect("/login");
             } else {
-                return new Response("Contraseñas diferentes");
+                $error = "Contraseña diferentes";
             }
         }
 
         return $this->render('login/register.html.twig', [
-            "form" => $form->createView()
+            "form" => $form->createView(),
+            "error" => $error
         ]);
     }
 

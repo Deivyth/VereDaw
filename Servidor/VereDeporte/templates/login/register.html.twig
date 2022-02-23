@@ -9,8 +9,10 @@
 		{{form_widget(form.password)}}
 		{{form_widget(form.password2)}}
 		{{form_widget(form.photo)}}
+		{% if error %}
+			{{error}}
+		{% endif %}
 		{{form_widget(form.submit)}}
-
 		<a class="btn btn-primary col-12 mt-1" href={{ path('inicio') }}>Volver</a>
 		{{form_end(form)}}
 		</div>
