@@ -20,12 +20,12 @@ class Partido
     private $id;
 
     /**
-     * @ORM\OneToOne(targetEntity=Equipo::class, cascade={"persist", "remove"})
+     * @ORM\ManyToOne(targetEntity=Equipo::class, inversedBy="partidos")
      */
     private $local;
 
     /**
-     * @ORM\OneToOne(targetEntity=Equipo::class, cascade={"persist", "remove"})
+     * @ORM\ManyToOne(targetEntity=Equipo::class, inversedBy="partidos")
      */
     private $visitante;
 

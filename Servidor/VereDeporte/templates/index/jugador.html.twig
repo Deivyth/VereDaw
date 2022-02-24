@@ -14,8 +14,14 @@
     		    <li><a class="dropdown-item text-light" href={{ path('list_reserva') }}>Ver o eliminar</a></li>
                 <li><a class="dropdown-item text-light" href={{ path('add_reserva') }}>Crear</a></li>
   		    </ul>
-            <a class="btn btn-primary rounded-3 m-1" href={{ path('add_liga_at_team') }}>Apuntarse liga</a><br>
+            <a class="btn btn-primary dropdown-toggle rounded-3 m-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">Liga</a>
+            <ul class="dropdown-menu bg-primary">
+    		    <li><a class="dropdown-item text-light" href={{ path('add_liga_at_team') }}>Apuntarse liga</a></li>
+                <li><a class="dropdown-item text-light" href={{ path('list_partido') }}>Ver partidos</a></li>
+  		    </ul>
             {% endif %}
-            <a class="btn btn-primary rounded-3 m-1">Ver partidos</a>
+            {% if is_granted("ROLE_JUGADOR") %}
+            <a class="btn btn-primary rounded-3 m-1" href={{ path('list_partido') }}>Ver partidos</a>
+            {% endif %}
         </div>
 {% endblock %}

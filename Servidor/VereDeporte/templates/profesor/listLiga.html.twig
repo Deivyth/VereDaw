@@ -3,16 +3,15 @@
 {% block body %}
     <script>
         function crearLiga(button,id){
-            console.log(id);
             var data = new FormData();
-             data.append("id",id);
+            data.append("id",id);
 
-          fetch("/profesor/crearLiga",{
-              method: "POST",
-              body: data
-          })
-          .then( data => {})
-          .catch( error => { console.log(error) });
+            fetch("/profesor/crearLiga",{
+                method: "POST",
+                body: data
+            })
+            .then( data => {})
+            .catch( error => { console.log(error) });
         }
     </script>
 
@@ -26,7 +25,7 @@
                         <li class="list-group-item">{{equipo.nombre}}</li>
                     {% endfor %}
                 </ul>
-                    {% if liga.apunta|length == 6 %}
+                    {% if liga.apunta|length == 6 and liga.apunta|length % 2 == 0 %}
                         <a class="btn btn-primary mt-1 mb-1" onclick = "crearLiga(this,'{{liga.id}}')">Crear liga</a>
                     {% endif %}
             </div>

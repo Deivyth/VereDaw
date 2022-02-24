@@ -1,0 +1,41 @@
+{% extends 'index.html.twig' %}
+
+{% block body %}
+  <div class="col-8">
+        {% if ligas|length == 0 %}
+            <h4>Aun no se ha creado ninguna liga</h4>
+        {% endif %}
+        {% for liga in ligas %}
+            <h3>{{liga.nombre}}</h3>
+            <table class="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col">Local</th>
+                <th scope="col">Visitante</th>
+                <th scope="col">Campo</th>
+                <th scope="col">Fecha y hora</th>
+                <th scope="col">Puntuación</th>
+              </tr>
+            </thead>
+            <tbody>
+          {% for partido in liga.partidos %}
+            {% if partido.local.id == equipo or partido.visitante.id == equipo %}
+              <tr>
+                <td scope="row">{{ partido.local.nombre }}</td>
+                <td scope="row">{{ partido.visitante.nombre }}</td>
+                <td scope="row">{{ partido.campo.tipo }}</td>
+                <td scope="row">{{ partido.fecha | date("Y-m-d H:i") }}</td>
+                {% if partido.resultado == null %}
+                    <td scope="row">Partido sin calificar</td>
+                {% else %}
+                    <td scope="row">{{ partido.resultado }}</td>
+                {% endif %}
+              </tr>
+            {% endif %}
+          {% endfor %}
+          </tbody>
+        </table>
+        {% endfor %}
+        <a class="btn btn-primary col-12 mt-1" href={{ path('inicio') }}>Volver</a>
+  </div>
+{% endblock %}

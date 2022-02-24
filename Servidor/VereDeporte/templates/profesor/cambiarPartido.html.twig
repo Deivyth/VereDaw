@@ -22,13 +22,14 @@
             <td scope="row">{{partido.local.nombre}}</td>
             <td scope="row">{{partido.visitante.nombre}}</td>
             <td scope="row">{{partido.campo.tipo}}</td>
-            <td scope="row">{{reserva.fecha | date("Y-m-d H:i")}}</td>
+            <td scope="row">{{partido.fecha | date("Y-m-d H:i")}}</td>
         </tr>
     {% endfor %}
         </tbody>
     </table>
 </div>
 
+{% if partidos|length != 0 %}
 <div class="col-2">
     {{form_start(form)}}
     {{form_label(form.id,"Id reserva:")}}
@@ -38,7 +39,8 @@
     {{form_widget(form.submit)}}
     {{form_end(form)}}
 </div>
+{% endif %}
 
- <a class="btn btn-primary col-4 mt-5" href={{ path('inicio') }}>Volver</a>
+ <a class="btn btn-primary col-6 mt-5" href={{ path('inicio') }}>Volver</a>
 
 {% endblock %}

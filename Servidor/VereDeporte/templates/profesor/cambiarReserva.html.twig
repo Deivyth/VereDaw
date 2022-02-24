@@ -26,16 +26,22 @@
     </table>
     
 </div>
+{% if reservas|length != 0 %}
 <div class="col-2">
     {{form_start(form)}}
     {{form_label(form.id,"Id reserva:")}}
     {{form_widget(form.id)}}
     {{form_label(form.nombre,"Vigilante:")}}
     {{form_widget(form.nombre)}}
+    {% if error %}
+        {{error}}
+    {% endif %}
     {{form_widget(form.submit)}}
     {{form_end(form)}}
 </div>
+{% endif %}
 
- <a class="btn btn-primary col-4 mt-5" href={{ path('inicio') }}>Volver</a>
+
+ <a class="btn btn-primary col-6 mt-5" href={{ path('inicio') }}>Volver</a>
 
 {% endblock %}

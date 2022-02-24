@@ -6,18 +6,17 @@
 		<br>
 		<a class="btn btn-primary rounded-3 m-1" href="{{ path('add_team')}}">Registrar equipo<a>
 		<br>
-		<a class="btn btn-primary rounded-3 m-1" href="{{ path('list_all_reserva') }}">Ver reservas</a>
-		<br>
-  		<a class="btn btn-primary dropdown-toggle rounded-3 m-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">Liga</a>
+		<a class="btn btn-primary dropdown-toggle rounded-3 m-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">Reservas</a>
 		<ul class="dropdown-menu bg-primary">
-    		<li><a class="dropdown-item text-light" href="{{ path('add_liga') }}">Registrar liga</a></li>
-    		<li><a class="dropdown-item text-light" href="{{ path('list_ligas') }}">Crear liga</a></li>
+			<li><a class="dropdown-item text-light" href="{{ path('list_all_reserva') }}">Ver reservas</a></li>
+    		<li><a class="dropdown-item text-light" href="{{ path('cambiar_reserva') }}">Cambiar vigilancia</a></li>
   		</ul>
-		<br>
-		<a class="btn btn-primary dropdown-toggle rounded-3 m-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">Cambiar vigilancia</a>
+  		<a class="btn btn-primary dropdown-toggle rounded-3 m-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">Ligas</a>
 		<ul class="dropdown-menu bg-primary">
-    		<li><a class="dropdown-item text-light" href="{{ path('cambiar_reserva') }}">Reserva</a></li>
-    		<li><a class="dropdown-item text-light" href="{{ path('cambiar_partido') }}">Partido</a></li>
+			<li><a class="dropdown-item text-light" href="{{ path('add_liga') }}">Crear</a></li>
+    		<li><a class="dropdown-item text-light" href="{{ path('list_ligas') }}">Registrar</a></li>
+    		<li><a class="dropdown-item text-light" href="{{ path('add_score') }}">Añadir puntuación</a></li>
+			<li><a class="dropdown-item text-light" href="{{ path('cambiar_partido') }}">Cambiar vigilancia</a></li>
   		</ul>
 		<br>
 	</div>

@@ -154,6 +154,21 @@ class CapitanController extends AbstractController
         ]);
     }
 
+    /**
+     * @Route("/capitan/listarPartidos", name="list_partido")
+     */
+
+    public function listPartidos(EntityManagerInterface $em){
+        $ligas = $this -> getUser() -> getEquipo() -> getLigas();
+        $equipo = $this -> getUser() -> getEquipo() -> getId();
+
+
+        return $this->render('capitan/listPartidos.html.twig', [
+            "ligas" => $ligas,
+            "equipo" => $equipo
+        ]);
+    }
+
     //AJAX
     /**
      * @Route("/capitan/fichar", name="add_at_team")
