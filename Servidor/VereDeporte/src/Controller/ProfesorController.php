@@ -421,7 +421,7 @@ class ProfesorController extends AbstractController
                 }
             }
 
-            $liga -> setFechaFin($arrayFechas[$dia]);
+            $liga -> setFechaFin($arrayFechas[$dia-1]);
             $em -> persist($liga);
             $em -> flush();
         }
@@ -440,7 +440,6 @@ class ProfesorController extends AbstractController
 
         try{
             $em -> persist($partido);
-            $em -> flush();
         }catch(\Exception $e){
 
         }

@@ -10,7 +10,9 @@
                 method: "POST",
                 body: data
             })
-            .then( data => {})
+            .then( data => {
+                 button.parentNode.remove()
+            })
             .catch( error => { console.log(error) });
         }
     </script>
