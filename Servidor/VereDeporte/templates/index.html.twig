@@ -9,19 +9,27 @@
     .dropdown-item:hover{
         background-color: #9154a8;
     }
+    html{
+        position:relative;
+    }
+    html, body{
+        position:relative;
+        min-height: 100vh;
+    }
     </style>
     <body>
     {% block header %}
         <header class="bg-primary p-3 mb-5 text-light"><h1 class="text-center">VereDeportes</h1></header>
     {% endblock %}
     <div class="container">
-        <div class="row justify-content-center" style="heigth=100vh">
+        <div class="row justify-content-center">
         {% block body %}{% endblock %}
         </div>
     </div>
     {% block footer %}
-        <footer class="position-absolute bottom-0 start-50 translate-middle">
-            <h6>Creado por Deivyth</h6>
+        <footer class="position-absolute bottom-0 mt-5 bg-primary w-100">
+            <h6 class="text-center p-2 m-0">Copyright 1999-2022 by Refsnes Data.</h6>
+            <h6 class="text-center p-2 m-0 text-muted">All Rights Reserved. Deivyth is Powered by Deivyth.</h6>
         </footer>
     {% endblock %}
     </body>

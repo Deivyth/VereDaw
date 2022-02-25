@@ -25,7 +25,6 @@ class LoginController extends AbstractController
         $lastUser = $au -> getLastUsername();
 
         return $this->render('login/index.html.twig', [
-            'controller_name' => 'LoginController',
             'error' => $lastError,
             'last_username' => $lastUser
         ]);
@@ -39,22 +38,40 @@ class LoginController extends AbstractController
         $user = $this-> getUser();
 
         if($user){
+            
             $rol = $user -> getRoles()[0];
+
+            if($user-> getPhoto()){
+                $img = base64_encode(stream_get_contents($user->getPhoto(),-1,-1));
+            }else{
+                $img = null;
+            }
+            if($user-> getEquipo()){
+                $imgEquipo = base64_encode(stream_get_contents($user->getEquipo()->getPhoto(),-1,-1));
+            }else{
+                $imgEquipo = null;
+            }
 
             switch($rol){
                 case "ROLE_JUGADOR":
+                    
                     return $this->render('index/jugador.html.twig', [
-                        'controller_name' => 'LoginController'
+                        'user' => $user,
+                        'img' => $img,
+                        'imgE' => $imgEquipo
                     ]);
                     break;
                 case "ROLE_CAPITAN":
                     return $this->render('index/jugador.html.twig', [
-                        'controller_name' => 'LoginController'
+                        'user' => $user,
+                        'img' => $img,
+                        'imgE' => $imgEquipo
                     ]);
                     break;
                 case "ROLE_PROFESOR":
                     return $this->render('index/profesor.html.twig', [
-                        'controller_name' => 'LoginController'
+                        'user' => $user,
+                        'img' => $img
                     ]);
                     break;
             }
@@ -77,6 +94,9 @@ class LoginController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             if ($form->get("password")->getData() == $form->get("password2")->getData()) {
                 $user->setRoles(["ROLE_JUGADOR"]);
+                $img = $form -> get("photo") -> getData();
+                $user -> setExt(pathinfo(file_get_contents($img), PATHINFO_EXTENSION));
+                $user->setPhoto(file_get_contents($img)); 
 
                 $hashPassword = $passwordHasher->hashPassword(
                     $user,
@@ -89,7 +109,7 @@ class LoginController extends AbstractController
                     $em->flush();
                     $error = "Usuario creado con exito";
                 } catch (\Exception $e) {
-                    return new Response("Esto no va");
+                    $error = "Error de servidor";
                 }
 
                 return $this -> redirect("/login");

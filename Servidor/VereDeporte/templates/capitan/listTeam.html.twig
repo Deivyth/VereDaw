@@ -1,0 +1,12 @@
+{% extends 'index.html.twig' %}
+
+{% block body %}
+<div class="col-6">
+    <ul class="list-group list-group-flush">
+        {% for jugador in jugadores %}
+             <li class="list-group-item">{{jugador.nombre}}</li>   
+        {% endfor %}
+    </ul>
+     <a class="btn btn-primary col-12 mt-1" href={{ path('inicio') }}>Volver</a>
+</div>
+{% endblock %}

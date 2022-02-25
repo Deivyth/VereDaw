@@ -54,4 +54,40 @@ class JugadorController extends AbstractController
         ]);
 
     }
+
+    /**
+     * @Route("/jugador/listarReserva", name="list_reservas")
+     */
+    public function listReserva(){
+
+        $reservas = null;
+
+        if($this -> getUser() -> getEquipo()){
+            $reservas = $this -> getUser() -> getEquipo() -> getReservas();
+        }
+
+        return $this->render('jugador/listReserva.html.twig', [
+            "reservas" => $reservas
+        ]);
+    }
+
+    /**
+     * @Route("/jugador/listarPartidos", name="list_partidos")
+     */
+
+    public function listPartidos(){
+        $ligas = null;
+        $equipo = null;
+
+        if($ligas = $this -> getUser() -> getEquipo()){
+            $ligas = $this -> getUser() -> getEquipo() -> getLigas();
+            $equipo = $this -> getUser() -> getEquipo() -> getId();
+        }
+        
+
+        return $this->render('jugador/listPartidos.html.twig', [
+            "ligas" => $ligas,
+            "equipo" => $equipo
+        ]);
+    }
 }

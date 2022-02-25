@@ -25,15 +25,27 @@ class CapitanController extends AbstractController
     /**
      * @Route("/capitan/solicitudes", name="list_players")
      */
-    public function listPlayers(EntityManagerInterface $em): Response
+    public function listPlayers(): Response
     {
         $equipo = $this -> getUser() -> getEquipo();
         $solicitudes = $equipo -> getUsuarios();
         
         return $this-> render('capitan/players.html.twig', [
-            'controller_name' => 'CapitanController',
             "solicitudes" => $solicitudes,
             "equipo" => $equipo
+        ]);
+    }
+
+    /**
+     * @Route("/capitan/equipo", name="list_team")
+     */
+    public function listTeam(EntityManagerInterface $em): Response
+    {
+        $equipo = $this -> getUser() -> getEquipo() -> getId();
+        $jugadores = $em -> getRepository(Usuario::class) -> findBy(["equipo" => $equipo]);
+        
+        return $this-> render('capitan/listTeam.html.twig', [
+            "jugadores" => $jugadores
         ]);
     }
 

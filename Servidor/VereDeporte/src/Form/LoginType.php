@@ -28,6 +28,7 @@ class LoginType extends AbstractType
                 "mapped"=>false, 
                 "attr" => ["placeholder" => "Confirm Password", "class" => "col-12 m-1"]))
             ->add('photo', FileType::class, array(
+                "required" => false,
                 "attr" => ["class" => "col-12 m-1 text-primary"]
             ))
             ->add("submit", SubmitType::class,array(

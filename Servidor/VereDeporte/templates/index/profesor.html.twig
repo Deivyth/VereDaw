@@ -1,7 +1,26 @@
 {% extends 'index.html.twig' %}
 
 {% block body %}
-	<div class="btn-group mt-5" role="group" aria-label="Basic example">
+	<div class="col-1 dropdown position-absolute top-0 end-0 mt-4 me-5 text-end">
+          <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+            {% if img == null %}
+                <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
+                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                    <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+                </svg>
+            {% else %}
+                <img src="data:image/png;base64,{{ img }}" alt="mdo" width="42" height="42" class="rounded-circle">
+            {% endif %}
+          </a>
+          <ul class="dropdown-menu text-small bg-primary" aria-labelledby="dropdownUser1" style="">
+            <li><h5 class="text-light ms-3">{{user.nombre}}</h5></li>
+            <li><a class="dropdown-item text-light" href="#">Profile</a></li>
+            <li><hr class="dropdown-divider text-light"></li>
+            <li><a class="dropdown-item text-light" href=" {{path('logout')}}">Log out</a></li>
+          </ul>
+    </div>
+	
+	<div class="btn-group" role="group" aria-label="Basic example">
 		<a class="btn btn-primary rounded-3 m-1" href="{{ path('add_profesor') }}">Registrar profesor</a>
 		<br>
 		<a class="btn btn-primary rounded-3 m-1" href="{{ path('add_team')}}">Registrar equipo<a>

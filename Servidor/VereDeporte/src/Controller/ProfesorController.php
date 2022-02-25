@@ -10,6 +10,7 @@ use App\Entity\Reserva;
 use App\Entity\Usuario;
 use App\Form\EquipoType;
 use App\Form\LoginType;
+use App\Form\PuntosPartidoType;
 use DateInterval;
 use DatePeriod;
 use DateTime;
@@ -81,10 +82,8 @@ class ProfesorController extends AbstractController
     /**
      * @Route("/profesor/equipo", name="add_team")
      */
-    public function equipo(
-        Request $request,
-        EntityManagerInterface $em
-    ): Response {
+    public function equipo(Request $request,EntityManagerInterface $em): Response 
+    {
         $error = '';
         $equipo = new Equipo();
 
@@ -301,49 +300,23 @@ class ProfesorController extends AbstractController
     /**
      * @Route("profesor/addScore", name="add_score")
      */
-    public function addScore(EntityManagerInterface $em, Request $request, Security $security)
+    public function addScore(EntityManagerInterface $em, Request $request)
     {
-        $usuario = $this-> getUser();
-        $partidos = $usuario-> getPartidos();
 
-        $form = $this->createFormBuilder()
-            ->add('id', EntityType::class, [
-                'class' => Partido::class,
-                'query_builder' => function (EntityRepository $er) {
-                    $id = $this -> getUser() -> getId();
+        $error = '';
+        $partidos = $em -> getRepository(Partido::class) -> findAll();
 
-                    return $er
-                        ->createQueryBuilder('u')
-                        ->where('u.vigilante = :vigilante')
-                        ->setParameter('vigilante', $id);
-                },
-                'choice_label' => 'id',
-                'attr' => ['class' => 'col-12'],
-            ])
-            ->add('nombre', EntityType::class, [
-                'class' => Usuario::class,
-                'query_builder' => function (EntityRepository $er) {
-                    return $er
-                        ->createQueryBuilder('u')
-                        ->andWhere('JSON_CONTAINS(u.roles , :rol) = 1')
-                        ->setParameter('rol', '"ROLE_PROFESOR"');
-                },
-                'choice_label' => 'nombre',
-                'attr' => ['class' => 'col-12'],
-            ])
-            ->add('submit', SubmitType::class, [
-                'label' => 'Cambiar vigilante',
-                'attr' => ['class' => 'btn btn-primary col-12 mt-1'],
-            ])
-            ->getForm();
+        $form =  $this -> createForm(PuntosPartidoType::class);
 
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
-            $partido = $form->get('id')->getData();
-            $vigilante = $form->get('nombre')->getData();
+            $partido = $form -> get('id') -> getData();
+            $local = $form->get('puntosLocal')->getData();
+            $visitante = $form->get('puntosVisitante')->getData();
 
-            $partido->setVigilante($vigilante);
-
+            $partido -> setPuntosLocal($local);
+            $partido -> setPuntosVisitante($visitante);
             try {
                 $em->persist($partido);
                 $em->flush();
@@ -352,7 +325,7 @@ class ProfesorController extends AbstractController
             }
         }
 
-        return $this->render('profesor/cambiarPartido.html.twig', [
+        return $this->render('profesor/score.html.twig', [
             'partidos' => $partidos,
             'form' => $form->createView(),
         ]);

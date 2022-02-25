@@ -1,0 +1,59 @@
+{% extends "index.html.twig" %}
+
+{% block body %}
+
+<div class="col-8">
+
+    <h3>Partidos</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Local</th>
+              <th scope="col">Visitante</th>
+              <th scope="col">Campo</th>
+              <th scope="col">Fecha y hora</th>
+              <th scope="col">Puntos</th>
+            </tr>
+        </thead>
+        <tbody>
+    {% for partido in partidos %}
+        <tr>
+            <td scope="row">{{partido.id}}</td>
+            <td scope="row">{{partido.local.nombre}}</td>
+            <td scope="row">{{partido.visitante.nombre}}</td>
+            <td scope="row">{{partido.campo.tipo}}</td>
+            <td scope="row">{{partido.fecha | date("Y-m-d H:i")}}</td>
+            <td scope="row">
+            {% if partido.puntosLocal == null or partido.puntosVisitante == null %}
+                Sin calificacion
+                {% else %}
+                {{partido.puntosLocal}}-{{partido.puntosVisitante}}
+            {% endif %}
+                
+            </td>
+        </tr>
+    {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if partidos|length != 0 %}
+<div class="col-2">
+    <div class= "row">
+    {{form_start(form)}}
+    {{form_label(form.id,"Id partido:")}}
+    {{form_widget(form.id)}}
+    {{form_label(form.puntosLocal,"Puntos local:")}}
+    {{form_widget(form.puntosLocal)}}
+    {{form_label(form.puntosVisitante,"Puntos visitante:")}}
+    {{form_widget(form.puntosVisitante)}}
+    {{form_widget(form.submit)}}
+    {{form_end(form)}}
+    </div>
+</div>
+{% endif %}
+
+ <a class="btn btn-primary col-6 mt-2 mb-5" href={{ path('inicio') }}>Volver</a>
+
+{% endblock %}

@@ -40,11 +40,6 @@ class Partido
     private $fecha;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $resultado;
-
-    /**
      * @ORM\ManyToOne(targetEntity=Liga::class, inversedBy="partidos")
      */
     private $liga;
@@ -53,6 +48,16 @@ class Partido
      * @ORM\ManyToOne(targetEntity=Campo::class, inversedBy="partidos")
      */
     private $campo;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $puntosLocal;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $puntosVisitante;
 
 
     public function __construct()
@@ -113,18 +118,6 @@ class Partido
         return $this;
     }
 
-    public function getResultado(): ?string
-    {
-        return $this->resultado;
-    }
-
-    public function setResultado(string $resultado): self
-    {
-        $this->resultado = $resultado;
-
-        return $this;
-    }
-
     public function getLiga(): ?Liga
     {
         return $this->liga;
@@ -145,6 +138,30 @@ class Partido
     public function setCampo(?Campo $campo): self
     {
         $this->campo = $campo;
+
+        return $this;
+    }
+
+    public function getPuntosLocal(): ?string
+    {
+        return $this->puntosLocal;
+    }
+
+    public function setPuntosLocal(?string $puntosLocal): self
+    {
+        $this->puntosLocal = $puntosLocal;
+
+        return $this;
+    }
+
+    public function getPuntosVisitante(): ?string
+    {
+        return $this->puntosVisitante;
+    }
+
+    public function setPuntosVisitante(?string $puntosVisitante): self
+    {
+        $this->puntosVisitante = $puntosVisitante;
 
         return $this;
     }

@@ -35,6 +35,10 @@
       
     </script>
     <div class="col-6">
+    {% if solicitudes|length == 0 %}
+      <h3 class="text-center mb-4">No hay solicitudes</h3>
+    {% endif %}
+    
     {% for usuario in solicitudes %}
       <div class = "row">
         <h3 class="col-auto">{{usuario.nombre}}</h3>

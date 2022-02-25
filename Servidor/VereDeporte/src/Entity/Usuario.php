@@ -67,6 +67,11 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $partidos;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $ext;
+
     public function __construct()
     {
         $this->solicitud = new ArrayCollection();
@@ -289,6 +294,18 @@ class Usuario implements UserInterface, PasswordAuthenticatedUserInterface
                 $partido->setVigilante(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getExt(): ?string
+    {
+        return $this->ext;
+    }
+
+    public function setExt(?string $ext): self
+    {
+        $this->ext = $ext;
 
         return $this;
     }

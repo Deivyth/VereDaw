@@ -23,7 +23,8 @@ class EquipoType extends AbstractType
             "attr" => ["class" => "col-12","placeholder"=> "Name"]
         ))
         ->add("photo", FileType::class, array(
-            "attr" => ["class" => "col-12 mt-1"]
+            "attr" => ["class" => "col-12 mt-1"],
+            "required" => false
         ))
         ->add("capitan", EntityType::class, array(
             "class" => Usuario::class,

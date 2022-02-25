@@ -1,0 +1,32 @@
+{% extends 'index.html.twig'%}
+
+{% block body %}
+    <div class="col-6">
+    {% if reservas == null %}
+    <h3 class="text-center">Aun no hay reservas</h3>
+     <a class="btn btn-primary col-12 mt-1" href={{ path('inicio') }}>Volver</a>
+    {% else %}
+    <table class="table table-striped">
+        <thead>
+            <tr>
+              <th scope="col">Vigilante</th>
+              -
+              <th scope="col">Campo</th>
+              <th scope="col">Fecha y hora</th>
+            </tr>
+        </thead>
+    <tbody>
+    {% for reserva in reservas %}
+        <tr>
+            <td scope="row">{{reserva.vigilante.nombre}}</td>
+            <td scope="row">{{reserva.campo.tipo}}</td>
+            <td scope="row">{{reserva.fecha | date("Y-m-d H:i")}}</td>
+        </tr>
+    {% endfor %}
+        </tbody>
+    </table>
+     <a class="btn btn-primary col-12 mt-1" href={{ path('inicio') }}>Volver</a>
+    {% endif %}
+    </div>
+   
+{% endblock %}

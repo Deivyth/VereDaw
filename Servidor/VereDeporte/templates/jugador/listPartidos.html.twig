@@ -2,8 +2,10 @@
 
 {% block body %}
   <div class="col-8">
-        {% if ligas|length == 0 %}
-            <h4>Aun no se ha creado ninguna liga</h4>
+        {% if equipo == null %}
+            <h4 class="text-center">No te han aceptado a ningun equipo</h4>
+            {% elseif ligas == null %}
+            <h4 class="text-center">El equipo no esta registrado en ninguna liga</h4>
         {% endif %}
         {% for liga in ligas %}
             <h3>{{liga.nombre}}</h3>
@@ -25,11 +27,11 @@
                 <td scope="row">{{ partido.visitante.nombre }}</td>
                 <td scope="row">{{ partido.campo.tipo }}</td>
                 <td scope="row">{{ partido.fecha | date("Y-m-d H:i") }}</td>
-                {% if partido.puntosLocal == null or partido.puntosVisitante == null %}
-                  Sin calificacion
+                {% if partido.resultado == null %}
+                    <td scope="row">Partido sin calificar</td>
                 {% else %}
-                  {{partido.puntosLocal}}-{{partido.puntosVisitante}}
-            {% endif %}
+                    <td scope="row">{{ partido.resultado }}</td>
+                {% endif %}
               </tr>
             {% endif %}
           {% endfor %}
