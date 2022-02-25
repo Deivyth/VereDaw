@@ -2,9 +2,10 @@
 
 {% block body %}
 
-<div class="col-8">
+<div class="col-8 h-50" style="overflowy: scroll;">
 
     <h3>Partidos</h3>
+
     <table class="table table-striped">
         <thead>
             <tr>
@@ -23,7 +24,7 @@
             <td scope="row">{{partido.local.nombre}}</td>
             <td scope="row">{{partido.visitante.nombre}}</td>
             <td scope="row">{{partido.campo.tipo}}</td>
-            <td scope="row">{{partido.fecha | date("Y-m-d H:i")}}</td>
+            <td scope="row">{{partido.fecha | date("d-m-Y H:i")}}</td>
             <td scope="row">
             {% if partido.puntosLocal == null or partido.puntosVisitante == null %}
                 Sin calificacion
@@ -48,6 +49,9 @@
     {{form_widget(form.puntosLocal)}}
     {{form_label(form.puntosVisitante,"Puntos visitante:")}}
     {{form_widget(form.puntosVisitante)}}
+    {% if error != null %}
+        {{error}}
+    {% endif %}
     {{form_widget(form.submit)}}
     {{form_end(form)}}
     </div>

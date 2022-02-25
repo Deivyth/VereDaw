@@ -121,15 +121,20 @@ class ProfesorController extends AbstractController
      */
     public function liga(Request $request, EntityManagerInterface $em): Response
     {
+        $error = "";
+        $boolean = false;
+        $nextFecha = null;
         $liga = new Liga();
         $liga->setFechaInicio(new \DateTime('tomorrow'));
 
         $form = $this->createFormBuilder($liga)
             ->add('nombre', TextType::class, [
                 'label' => ' ',
-                'attr' => ['class' => 'col-12', 'placeholder' => 'Name'],
+                'attr' => ['class' => 'col-12 mb-1', 'placeholder' => 'Name'],
             ])
-            ->add('fecha_inicio', DateType::class)
+            ->add('fecha_inicio', DateType::class, array(
+                'attr' => ['class' => 'col-12 mb-1']
+            ))
             ->add('guardar', SubmitType::class, [
                 'label' => 'Crear Liga',
                 'attr' => ['class' => 'col-12 btn btn-primary mt-1'],
@@ -138,16 +143,41 @@ class ProfesorController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            try {
-                $em->persist($liga);
-                $em->flush();
-            } catch (\Exception $e) {
-                return new Response('Esto no va');
+            $fecha = $form -> get("fecha_inicio") -> getData();
+
+            $ligas = $em -> getRepository(Liga::class) -> findAll();
+            foreach($ligas as $ligaBD){
+                if($fecha < $ligaBD -> getFechaInicio() || $fecha > $ligaBD -> getFechaFin()){
+                    $boolean = true;
+                }else{
+                    $nextFecha = $ligaBD -> getFechaFin();
+                    $boolean = false;
+                    break;
+                }
             }
+
+            if($fecha > new DateTime("now")){
+                if($boolean == true){
+                    try {
+                        $em->persist($liga);
+                        $em->flush();
+                    } catch (\Exception $e) {
+                        return new Response('Esto no va');
+                    }
+                }else{
+                    $error = "Liga en curso.";
+                }
+            }else{
+                $error = "No se puede volver al pasado";
+                $nextFecha = null;
+            }
+
         }
 
         return $this->render('profesor/liga.html.twig', [
             'form' => $form->createView(),
+            'error' => $error,
+            'nextfecha' => $nextFecha
         ]);
     }
 
@@ -315,18 +345,29 @@ class ProfesorController extends AbstractController
             $local = $form->get('puntosLocal')->getData();
             $visitante = $form->get('puntosVisitante')->getData();
 
-            $partido -> setPuntosLocal($local);
-            $partido -> setPuntosVisitante($visitante);
-            try {
-                $em->persist($partido);
-                $em->flush();
-            } catch (\Exception $e) {
-                return new Response('Esto no va:' . $e);
+            $fecha = $partido -> getFecha();
+            $ahora = new DateTime("now +90 minutes");
+            $df = $ahora -> diff($ahora);
+
+            if($ahora > $fecha ){
+                $partido -> setPuntosLocal($local);
+                $partido -> setPuntosVisitante($visitante);
+                try {
+                    $em->persist($partido);
+                    $em->flush();
+                
+                } catch (\Exception $e) {
+                    $error = "Error con el servidor";
+                }
+            }else{
+                $error = "Aun no se ha jugado el partido";
             }
+
         }
 
         return $this->render('profesor/score.html.twig', [
             'partidos' => $partidos,
+            'error' => $error,
             'form' => $form->createView(),
         ]);
     }
@@ -359,7 +400,8 @@ class ProfesorController extends AbstractController
             $vs = $participantes/2;
 
             $dia = 0;
-            $fecha = new DateTime("next Saturday +15 hour");
+            $fechaI = $liga -> getFechaInicio();
+            $fecha = new DateTime($fechaI->format("Y-m-d H:i")." next Saturday +15 hour");
             $intervalo = new DateInterval("P7D");
             $fechas = new DatePeriod($fecha, $intervalo, $partidos);
             $arrayFechas = [];

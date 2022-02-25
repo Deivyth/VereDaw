@@ -4,8 +4,12 @@
 
     <div class="col-4 mt-5">
         {{form_start(form)}}
-	    {{form_widget(form)}}
-        <a class="btn btn-primary m-1 col-12" href="{{ path("inicio") }}">Volver<a>
+	    {{form_widget(form.apunta)}}
+        {% if error != null %}
+            <p class="col-12 mt-1 mb-1">{{error}}</p>
+        {% endif %}
+	    {{form_widget(form.submit)}}
+        <a class="btn btn-primary col-12" href="{{ path("inicio") }}">Volver<a>
 	    {{form_end(form)}}
     </div>
 

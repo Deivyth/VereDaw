@@ -70,45 +70,44 @@ class CapitanController extends AbstractController
             $campo = $form -> get("campo") -> getData();
 
             $dateTime = new DateTime($fecha -> format("d-m-Y")." ".$hora->format("H:i"));
+            $tiempoPartido = new DateTime($dateTime -> format("d-m-Y")." ".$hora->format("H:i")." +90 min");
 
             $equipo = $this -> getUser() -> getEquipo();
-
-            $reserva -> setEquipo($equipo);
-            $reserva -> setFecha($dateTime);
-
             $reservas = $campo -> getReservas();
             
-            $dia = $fecha -> format("D");
-            
             foreach($reservas as $reservaBD){
-                $df = $reservaBD -> getFecha() -> diff($dateTime);
-                $minutos = $df-> i + ($df-> h * 60) + ($df -> d * 1440);
-                
-                if($minutos >= 90){
-                    $comprobacion = true;
-                }else{
+                $fechaBD = $reservaBD -> getFecha();
+                if(($fechaBD >= $dateTime)  && ($fechaBD <= $tiempoPartido)){
                     $comprobacion = false;
                     break;
-                }
-            }
-
-            //COMPROBACION DE ERRORES
-            if($dia == "Sat" || $dia == "Sun"){
-                $error = "Solo se puede crear entre semana";
-            }else{
-                if($comprobacion == true || sizeof($reservas) == 0){
-                    try {
-                        $em->persist($reserva);
-                        $em->flush();
-                    } catch (\Exception $e) {
-                        $error = "Error con servidor";
-                    }
-                    $error = "Reserva creada";
                 }else{
-                    $error = "Campo y fecha ya reservada";
+                    $comprobacion = true;
                 }
             }
 
+            $dia = $fecha -> format("D");
+            //COMPROBACION DE ERRORES 
+            if($fecha > new DateTime("now")){
+                if($dia == "Sat" || $dia == "Sun"){
+                    $error = "Solo se puede crear entre semana";
+                }else{
+                    if($comprobacion == true || sizeof($reservas) == 0){
+                        $reserva -> setEquipo($equipo);
+                        $reserva -> setFecha($dateTime);
+                        try {
+                            $em->persist($reserva);
+                            $em->flush();
+                        } catch (\Exception $e) {
+                            $error = "Error con servidor";
+                        }
+                        $error = "Reserva creada";
+                    }else{
+                        $error = "Campo y fecha ya reservada";
+                    }
+                }
+            }else{
+                $error = "No se puede volver al pasado";
+            }
         }
 
         return $this->render('capitan/reserva.html.twig', [
@@ -122,6 +121,7 @@ class CapitanController extends AbstractController
      * @Route("/capitan/liga", name="add_liga_at_team")
      */
     public function addLiga(Request $request, EntityManagerInterface $em){
+        $error = "";
 
         $form = $this -> createFormBuilder()
         ->add("apunta",EntityType::class, array(
@@ -131,7 +131,7 @@ class CapitanController extends AbstractController
         ))
         -> add("submit", SubmitType::class, array(
             "label" => "Solicitar liga",
-            "attr" => ["class" => "btn btn-primary col-12 m-1"]
+            "attr" => ["class" => "btn btn-primary col-12 mt-1 mb-1"]
         ))
         -> getForm();
 
@@ -144,13 +144,14 @@ class CapitanController extends AbstractController
             try {
                 $em->persist($liga);
                 $em->flush();
+                $error = "Solicitud enviada";
             } catch (\Exception $e) {
-                return new Response("Esto no va:".$e);
+                $error = "Error del servidor";
             }
         }
 
         return $this->render('capitan/liga.html.twig', [
-            'controller_name' => 'JugadorController',
+            'error' => $error,
             "form" => $form-> createView()
         ]);
     }

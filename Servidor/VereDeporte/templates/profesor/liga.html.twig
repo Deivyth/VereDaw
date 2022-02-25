@@ -3,7 +3,17 @@
     {% block body %}
 		<div class="col-6 mt-3">
         	{{form_start(form)}}
-			{{form_widget(form)}}
+			{{form_widget(form.nombre)}}
+			{{form_widget(form.fecha_inicio)}}
+			{% if error != null %}
+				<ul>
+					<li>{{error}}</li>
+					{% if nextfecha != null %}
+						<li>Proxima fecha disponible: {{nextfecha | date("d-m-Y")}}</li>
+					{% endif %}
+				</ul>
+			{% endif %}
+			{{form_widget(form.guardar)}}
 			<a class="btn btn-primary col-12 mt-1" href={{ path('inicio') }}>Volver</a>
 			{{form_end(form)}}
 		</div>

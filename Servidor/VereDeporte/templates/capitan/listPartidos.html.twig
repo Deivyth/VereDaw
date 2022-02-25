@@ -24,12 +24,14 @@
                 <td scope="row">{{ partido.local.nombre }}</td>
                 <td scope="row">{{ partido.visitante.nombre }}</td>
                 <td scope="row">{{ partido.campo.tipo }}</td>
-                <td scope="row">{{ partido.fecha | date("Y-m-d H:i") }}</td>
-                {% if partido.puntosLocal == null or partido.puntosVisitante == null %}
-                  Sin calificacion
-                {% else %}
-                  {{partido.puntosLocal}}-{{partido.puntosVisitante}}
-            {% endif %}
+                <td scope="row">{{ partido.fecha | date("d-m-Y H:i") }}</td>
+                <td>
+                  {% if partido.puntosLocal == null or partido.puntosVisitante == null %}
+                    Sin calificacion
+                  {% else %}
+                    {{partido.puntosLocal}}-{{partido.puntosVisitante}}
+                  {% endif %}
+                </td>
               </tr>
             {% endif %}
           {% endfor %}
