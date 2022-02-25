@@ -23,6 +23,19 @@ use Symfony\Component\Routing\Annotation\Route;
 class CapitanController extends AbstractController
 {
     /**
+     * @Route("/capitan/usuario", name="usuarioC")
+     */
+    public function profile(): Response
+    {
+        $usuario = $this -> getUser();
+        $form = $this -> createForm();
+        
+        return $this-> render('capitan/usuario.html.twig', [
+            "usuario" => $usuario
+        ]);
+    }
+
+    /**
      * @Route("/capitan/solicitudes", name="list_players")
      */
     public function listPlayers(): Response
@@ -55,13 +68,15 @@ class CapitanController extends AbstractController
     public function addReserva(EntityManagerInterface $em, Request $request){
         
         $error = "";
+        $nextFecha = "";
         $comprobacion = false;
 
         $reserva = new Reserva();
-        $reserva -> setFecha(new \DateTime("today"));
+        $reserva -> setFecha(new \DateTime("now"));
 
         $form = $this -> createForm(ReservaType::class, $reserva);
         $form -> handleRequest($request);
+        //$form -> set("hora") -> setFecha(new \DateTime("now"));  
 
         if($form -> isSubmitted() && $form -> isValid()){
 
@@ -82,6 +97,13 @@ class CapitanController extends AbstractController
                     break;
                 }else{
                     $comprobacion = true;
+                }
+            }
+
+            foreach($reservas as $reservaBD){
+                $fechaBD = $reservaBD -> getFecha();
+                if(($fechaBD >= $dateTime)  && ($fechaBD <= $tiempoPartido)){
+                    $nextFecha = $tiempoPartido;
                 }
             }
 
@@ -107,12 +129,14 @@ class CapitanController extends AbstractController
                 }
             }else{
                 $error = "No se puede volver al pasado";
+                $nextFecha = null;
             }
         }
 
         return $this->render('capitan/reserva.html.twig', [
             "form" => $form->createView(),
-            "error" => $error
+            "error" => $error,
+            "nextfecha" => $nextFecha
         ]);
     }
 
@@ -172,6 +196,21 @@ class CapitanController extends AbstractController
      */
 
     public function listPartidos(EntityManagerInterface $em){
+        $ligas = $this -> getUser() -> getEquipo() -> getLigas();
+        $equipo = $this -> getUser() -> getEquipo() -> getId();
+
+
+        return $this->render('capitan/listPartidos.html.twig', [
+            "ligas" => $ligas,
+            "equipo" => $equipo
+        ]);
+    }
+
+    /**
+     * @Route("/capitan/clasificacion", name="clasificacion")
+     */
+
+    public function clasificacion(EntityManagerInterface $em){
         $ligas = $this -> getUser() -> getEquipo() -> getLigas();
         $equipo = $this -> getUser() -> getEquipo() -> getId();
 

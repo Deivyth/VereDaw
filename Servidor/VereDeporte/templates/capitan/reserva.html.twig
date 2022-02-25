@@ -10,9 +10,16 @@
         {{form_label(form.campo,"Fecha de reserva: ")}}
 		{{form_widget(form.fecha)}}
 		{{form_widget(form.hora)}}
-        {% if error %}
-		    <div class="text-muted mt-2 mb-2">{{ error }}</div>
-	    {% endif %}
+		
+		{% if error != null %}
+		<ul class="ms-3 mt-1">		
+				<li>{{error}}</li>
+			{% if nextfecha != null %}
+				<li>Proxima fecha disponible: {{nextfecha | date("d-m-Y H:i")}}</li>
+			{% endif %}
+		</ul>
+		{% endif %}
+		
 		{{form_widget(form.submit)}}
 		<a class="btn btn-primary col-12 mt-1" href={{ path('inicio') }}>Volver</a>
 		{{form_end(form)}}

@@ -20,7 +20,7 @@ class JugadorController extends AbstractController
      */
     public function request_team(Request $request,EntityManagerInterface $em): Response
     {   
-
+        $error = "";
         $email = $this -> getUser() -> getUserIdentifier();
         $usuario = $em -> getRepository(Usuario::class) -> findOneBy(["email" => $email]);
 
@@ -28,11 +28,12 @@ class JugadorController extends AbstractController
         ->add("solicitud",EntityType::class, array(
             "class" => Equipo::class,
             "choice_label" => "nombre",
-            "label" => "Equipos "
+            "label" => "Equipos ",
+            "attr" => ["class" => "mb-1 mt-1 col-12"]
         ))
         -> add("submit", SubmitType::class, array(
             "label" => "Solicitar equipo",
-            "attr" => ["class" => "btn btn-primary col-12 m-1"]
+            "attr" => ["class" => "btn btn-primary col-12 mb-1"]
         ))
         -> getForm();
 
@@ -43,13 +44,14 @@ class JugadorController extends AbstractController
             try {
                 $em->persist($usuario);
                 $em->flush();
+                $error = "Solicitud enviada";
             } catch (\Exception $e) {
                 return new Response("Esto no va:".$e);
             }
         }
 
         return $this->render('jugador/index.html.twig', [
-            'controller_name' => 'JugadorController',
+            'error' => $error,
             "form" => $form-> createView()
         ]);
 
