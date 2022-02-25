@@ -1,0 +1,10 @@
+{% extends 'index.html.twig'%}
+
+{% block body %}
+    <div class="col-5">
+        {{form_start(form, {'attr': {'class': 'row'}})}}
+        {{form_widget(form)}}
+        <a class="btn btn-primary col-12 mt-1" href={{ path('inicio') }}>Volver</a>
+        {{form_end(form)}}
+    </div>
+{% endblock %}

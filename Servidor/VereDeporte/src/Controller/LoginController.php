@@ -57,15 +57,13 @@ class LoginController extends AbstractController
                     
                     return $this->render('index/jugador.html.twig', [
                         'user' => $user,
-                        'img' => $img,
-                        'imgE' => $imgEquipo
+                        'img' => $img
                     ]);
                     break;
                 case "ROLE_CAPITAN":
                     return $this->render('index/jugador.html.twig', [
                         'user' => $user,
-                        'img' => $img,
-                        'imgE' => $imgEquipo
+                        'img' => $img
                     ]);
                     break;
                 case "ROLE_PROFESOR":
@@ -95,7 +93,6 @@ class LoginController extends AbstractController
             if ($form->get("password")->getData() == $form->get("password2")->getData()) {
                 $user->setRoles(["ROLE_JUGADOR"]);
                 $img = $form -> get("photo") -> getData();
-                $user -> setExt(pathinfo(file_get_contents($img), PATHINFO_EXTENSION));
                 $user->setPhoto(file_get_contents($img)); 
 
                 $hashPassword = $passwordHasher->hashPassword(

@@ -61,6 +61,9 @@ class ProfesorController extends AbstractController
                 );
                 $user->setPassword($hashPassword);
 
+                $img = $form -> get("photo") -> getData();
+                $user -> setPhoto(file_get_contents($img));
+
                 try {
                     $em->persist($user);
                     $em->flush();
@@ -99,8 +102,10 @@ class ProfesorController extends AbstractController
                 ->get('capitan')
                 ->getData()
                 ->setEquipo($equipo);
-            $equipo->setCapitan($form->get('capitan')->getData());
 
+            $equipo->setCapitan($form->get('capitan')->getData());
+            $img = $form -> get("photo") -> getData();
+            $equipo-> setPhoto(file_get_contents($img));
             try {
                 $em->persist($equipo);
                 $em->flush();

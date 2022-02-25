@@ -15,7 +15,11 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -25,13 +29,50 @@ class CapitanController extends AbstractController
     /**
      * @Route("/capitan/usuario", name="usuarioC")
      */
-    public function profile(): Response
+    public function profile(Request $request, EntityManagerInterface $em): Response
     {
         $usuario = $this -> getUser();
-        $form = $this -> createForm();
+
+        $form = $this -> createFormBuilder($usuario)
+            ->add("nombre", TextType::class,[
+                "required" => false,
+                "attr" => ["class" => "col-12"]
+            ])
+            ->add("email", EmailType::class,[
+                "required" => false,
+                "attr" => ["class" => "col-12"]
+            ])
+            ->add("photo", FileType::class,[
+                "required" => false,
+                "attr" => ["class" => "col-12 text-primary mb-1"]
+            ])
+            ->add("submit", SubmitType::class,[
+                "attr" => ["class" => "btn btn-primary col-12"]
+            ])
+            ->getForm();
         
+        $form -> handleRequest($request);
+
+        if($form -> isSubmitted() && $form -> isValid()){
+
+            $usuario -> setNombre($form -> get("nombre") -> getData());
+            $usuario -> setEmail($form -> get("email") -> getData());
+            $img = $form -> get("photo") -> getData();
+            if($img){
+                $usuario -> setPhoto(file_get_contents($img));
+            }
+
+            try{
+                $em -> persist($usuario);
+                $em -> flush();
+            }catch (\Exception $e) {
+                $error = "Error con servidor";
+            }
+        }
+
         return $this-> render('capitan/usuario.html.twig', [
-            "usuario" => $usuario
+            "usuario" => $usuario,
+            "form" => $form -> createView()
         ]);
     }
 
@@ -75,8 +116,7 @@ class CapitanController extends AbstractController
         $reserva -> setFecha(new \DateTime("now"));
 
         $form = $this -> createForm(ReservaType::class, $reserva);
-        $form -> handleRequest($request);
-        //$form -> set("hora") -> setFecha(new \DateTime("now"));  
+        $form -> handleRequest($request);  
 
         if($form -> isSubmitted() && $form -> isValid()){
 
@@ -283,4 +323,23 @@ class CapitanController extends AbstractController
         }
         return $this-> redirect("/capitan/solicitudes");
     }
+
+    /**
+     * @Route("/capitan/expulsarJugador", name="del_jugador")
+     */
+    public function delPlayer(EntityManagerInterface $em){
+        if(isset($_POST["id"])){
+            $usuario = $em -> getRepository(Usuario::class) -> find($_POST["id"]);
+            $usuario -> setEquipo(null);
+
+            try {
+                $em -> persist($usuario);
+                $em -> flush();
+            } catch (\Throwable $th) {
+                //return json_encode($th);
+            }
+        }
+        return $this-> redirect("/capitan/equipo");
+    }
+    
 }
