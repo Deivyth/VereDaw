@@ -1,0 +1,21 @@
+<!--<input type="text" placeholder="Buscar por nombre" #nombre>-->
+<!--<input type="button" value="Buscar" (click)="search(nombre.value)">-->
+
+<div class="pokemons" infinite-scroll (scrolled)="onScrollDown($event)">
+    <div *ngFor="let pokemon of dataService.pokemons" class="pokemon" [style.background-color]="selectColor(pokemon.numberType)" (click) = "dataService.moreDetails(pokemon.nombre)">
+        <p *ngIf="dataService.pokemons.length == 0">This pokemon doesn't exist</p>
+        <div class="imagenes">
+            <img src="{{pokemon.urlFront}}" alt="">
+            <img src="{{pokemon.urlBack}}" alt="">
+        </div>
+        <h2>{{pokemon.nombre}}</h2>
+        <div class="stats">
+            <h4>{{pokemon.type}}</h4>
+            <h4>{{pokemon.hp}}</h4>
+            <h4>{{pokemon.attack}}</h4>
+            <h4>{{pokemon.defense}}</h4>
+            <h4>{{pokemon.speed}}</h4>
+        </div>
+    </div>
+</div>
+

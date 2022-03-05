@@ -1,0 +1,12 @@
+<menu class="buscador">
+    <div class="name">
+        <input type="text" placeholder="Search for name ..." #nombre>
+        <input type="button" value="Buscar" (click)='dataService.moreDetails(nombre.value)'>
+    </div>
+    <select>
+        <option *ngFor="let type of types" (click) = "dataService.searchType(type.url)">{{type.nombre.charAt(0).toUpperCase() + type.nombre.slice(1)}}</option>
+    </select>
+    <input type="button" value="Volver a inicio" (click) = "dataService.getPokemons(0)">
+</menu>
+
+<app-pokemon></app-pokemon>
